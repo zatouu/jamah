@@ -27,9 +27,14 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
         </nav>
       </div>
       <div className="border-t border-line/70">
-        <p className="container-page py-5 text-xs text-muted">
-          © {new Date().getFullYear()} {dict.meta.siteName}. {dict.footer.rights}
-        </p>
+        <div className="container-page flex flex-wrap justify-between gap-3 py-5 text-xs text-muted">
+          <p>
+            © {new Date().getFullYear()} {dict.meta.siteName}. {dict.footer.rights}
+          </p>
+          <Link href={localePath(locale, 'credits')} className="hover:text-forest-700">
+            {dict.homePage.photoCredits}
+          </Link>
+        </div>
       </div>
     </footer>
   )

@@ -69,6 +69,8 @@ Voir `.env.example` (aucune valeur réelle n'est versionnée).
 - Texte original, traduction, translittération, paraphrase et commentaire sont toujours distingués.
 - Workflow : brouillon → en vérification → validé → publié → corrigé/retiré.
 - Les rubriques non rédigées sont des pages provisoires `noindex`, exclues du sitemap.
+- Images : registre unique `apps/web/src/content/media.ts` (auteur, licence, source), affiché sur `/[lang]/credits`.
+  Aucun faux portrait : les photos manquantes sont des emplacements « photo à fournir » (`PhotoSlot`).
 
 ## Documentation
 

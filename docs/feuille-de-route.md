@@ -17,3 +17,7 @@
 - [ ] Réponses de la Jamah aux questions du dossier biographique (§5)
 - [ ] Relecture de la traduction arabe de l'interface (`apps/web/src/i18n/dictionaries/ar.ts`), en particulier les graphies arabes des noms
 - [ ] Démarrer Docker Desktop et valider `docker compose up` de bout en bout
+- [ ] Photothèque de la Jamah (avec autorisations) pour remplacer les emplacements « photo à fournir » : portrait officiel de Cheikh Ousmane Mbow, Gamou de Boubacar, ḥaḍra, dars
+- [ ] Vidéos YouTube officielles (identifiants des chaînes et vidéos autorisées)
+- [ ] Texte arabe original de la citation du premier discours de Cheikh Ould Khayri (25/08/1978)
+- [ ] Coordonnées de contact (e-mail, WhatsApp, adresse des assemblées)
