@@ -1,0 +1,19 @@
+# Feuille de route
+
+| Phase | Contenu | État |
+|---|---|---|
+| 1 | Audit de l'existant, dossier de recherche, socle technique (monorepo, Compose, site FR/AR, Search Service `/health`, CI) | ✅ livré — inventaire MongoDB bloqué (cluster Atlas introuvable) |
+| 2 | Spécifications produit, sitemap validé, parcours, maquettes des gabarits | à venir |
+| 3 | Modèle de contenu Directus (schéma versionné), rôles et workflow, données FICTIF, outil d'import | à venir |
+| 4 | Gabarits éditoriaux (article, auteur, ouvrage, passage, vidéo, événement), lecteur parallèle | à venir |
+| 5 | Indexation Elasticsearch (FR, AR, translittération), API `/v1/search`, `/v1/suggest` | à venir |
+| 6 | Page de résultats, commentaires contextuels (survol / toucher) | à venir |
+| 7 | Tests E2E, accessibilité, SEO (JSON-LD, hreflang), sécurité, déploiement | à venir |
+| 8 | Préparation recherche hybride / RAG | à venir |
+
+## Reste à faire après la phase 1
+
+- [ ] Fournir un accès au corpus MongoDB existant (URI valide ou `mongodump`) → `tools/inventory-mongo`
+- [ ] Réponses de la Jamah aux questions du dossier biographique (§5)
+- [ ] Relecture de la traduction arabe de l'interface (`apps/web/src/i18n/dictionaries/ar.ts`), en particulier les graphies arabes des noms
+- [ ] Démarrer Docker Desktop et valider `docker compose up` de bout en bout

@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* Design tokens — direction artistique « éditoriale épurée » */
+@theme {
+  --color-ivory: #faf8f3;
+  --color-paper: #ffffff;
+  --color-sand: #f2eee5;
+  --color-line: #e5e0d5;
+  --color-ink: #1b1f1c;
+  --color-muted: #5b615b;
+  --color-forest-50: #eef4f0;
+  --color-forest-100: #d6e6dc;
+  --color-forest-600: #1f5a44;
+  --color-forest-700: #164a37;
+  --color-forest-800: #0f3d2e;
+  --color-forest-900: #0a2a20;
+  --color-ochre: #8a5a1c;
+  --color-ochre-soft: #f5ecdd;
+
+  --radius-card: 1rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-arabic: var(--font-naskh), "Noto Naskh Arabic", serif;
+  --font-quran: var(--font-amiri), "Amiri", serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "kern", "liga";
+  }
+
+  html[dir="rtl"] body {
+    font-family: var(--font-arabic);
+    line-height: 1.85;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest-600);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-forest-100);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-serif);
+  letter-spacing: -0.015em;
+  [dir="rtl"] & {
+    font-family: var(--font-arabic);
+    letter-spacing: 0;
+  }
+}
+
+/* Texte arabe vocalisé (Coran, poèmes) : taille et interligne généreux */
+@utility text-arabic {
+  font-family: var(--font-quran);
+  font-size: 1.75rem;
+  line-height: 2.2;
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+}

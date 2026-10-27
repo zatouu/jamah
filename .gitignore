@@ -1,0 +1,33 @@
+# deps
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# builds
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# tests
+coverage/
+playwright-report/
+test-results/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+
+# data volumes
+data/
+
+# os / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

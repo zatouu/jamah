@@ -1,0 +1,12 @@
+{
+  "name": "@jamah/inventory-mongo",
+  "private": true,
+  "type": "module",
+  "description": "Inventaire en lecture seule du corpus MongoDB de sufi-knowledge (Ma'rifa).",
+  "scripts": {
+    "inventory": "node inventory.mjs"
+  },
+  "dependencies": {
+    "mongodb": "7.0.0"
+  }
+}
