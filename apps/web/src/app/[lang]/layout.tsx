@@ -6,6 +6,7 @@ import { getDictionary } from '@/i18n/get-dictionary'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { localizedAlternates, siteUrl } from '@/lib/site'
+import { jsonLdScript, siteJsonLd } from '@/lib/structured-data'
 import '../globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
@@ -63,6 +64,7 @@ export default async function LocaleLayout({ children, params }: Params & { chil
         <SiteHeader locale={lang} dict={dict} />
         <main id="main">{children}</main>
         <SiteFooter locale={lang} dict={dict} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd(lang, dict)) }} />
       </body>
     </html>
   )

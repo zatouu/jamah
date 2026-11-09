@@ -7,9 +7,11 @@ import {
   Gatherings,
   Hero,
   Join,
+  KhayriSpotlight,
   LibraryPrinciple,
   Masters,
-  Paths,
+  MbowSpotlight,
+  Progression,
   QuoteBand,
 } from '@/components/home/sections'
 
@@ -27,10 +29,12 @@ export default async function HomePage({ params }: Params) {
     <>
       <Hero {...props} />
       <QuoteBand {...props} />
+      <Progression {...props} />
       <Masters {...props} />
+      <KhayriSpotlight {...props} />
+      <MbowSpotlight {...props} />
       <CommunityLife {...props} />
       <Gatherings {...props} />
-      <Paths {...props} />
       <LibraryPrinciple {...props} />
       <Gallery {...props} />
       <Join {...props} />

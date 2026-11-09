@@ -3,14 +3,18 @@ import { locales } from '@/i18n/config'
 import { localePath } from '@/lib/paths'
 import { siteUrl } from '@/lib/site'
 
-// Seules les pages publiées et validées figurent au sitemap.
-// Les rubriques provisoires (noindex) en sont exclues.
+// Seules les pages publiées figurent au sitemap.
+// Les rubriques en préparation (noindex) en sont exclues jusqu'à publication de contenus validés.
+const indexedPaths = ['', 'credits']
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const languages = Object.fromEntries(locales.map((l) => [l, `${siteUrl}${localePath(l)}`]))
-  return locales.map((lang) => ({
-    url: `${siteUrl}${localePath(lang)}`,
-    changeFrequency: 'weekly',
-    priority: 1,
-    alternates: { languages },
-  }))
+  return indexedPaths.flatMap((path) => {
+    const languages = Object.fromEntries(locales.map((l) => [l, `${siteUrl}${localePath(l, path)}`]))
+    return locales.map((lang) => ({
+      url: `${siteUrl}${localePath(lang, path)}`,
+      changeFrequency: path ? ('yearly' as const) : ('weekly' as const),
+      priority: path ? 0.3 : 1,
+      alternates: { languages },
+    }))
+  })
 }

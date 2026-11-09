@@ -1,28 +1,40 @@
 /**
- * Arborescence du site (sitemap validé en phase 2 — provisoire).
- * Les libellés vivent dans les dictionnaires i18n, clés = slugs.
+ * Arborescence du site — source unique des rubriques.
+ * Les libellés vivent dans les dictionnaires i18n (clés = slugs) ; les contenus viendront du CMS.
+ * Progression pédagogique : Islam → Tijâniyya → Fayḍa → Cheikh Ould Khayri → Cheikh Ousmane Mbow → la Jamah.
  */
 export const siteSections = {
-  jamah: ['histoire-mission', 'identite-spirituelle', 'activites', 'contact'],
-  'comprendre-islam': ['le-prophete', 'coran', 'hadith-sunna', 'croyance', 'jurisprudence', 'spiritualite', 'ethique'],
-  tijaniyya: ['histoire', 'cheikh-ahmad-tijani', 'wird-wazifa', 'adab', 'textes', 'questions'],
-  fayda: ['cheikh-ibrahim-niasse', 'histoire', 'themes', 'oeuvres'],
-  maitres: ['cheikh-ould-khayri', 'cheikh-ousmane-mbow'],
-  bibliotheque: ['recherche', 'auteurs', 'ouvrages', 'videos'],
+  'comprendre-islam': ['le-prophete', 'coran', 'sunna-hadith', 'tawhid', 'fiqh', 'tazkiya', 'dhikr', 'ethique', 'relations-sociales'],
+  tijaniyya: ['histoire', 'cheikh-ahmad-tijani', 'fondements', 'wird-wazifa', 'dhikr-pratiques', 'adab', 'references', 'questions', 'enseignements'],
+  fayda: ['presentation', 'cheikh-ibrahim-niasse', 'parcours-oeuvre', 'tawhid-marifa', 'education-spirituelle', 'oeuvres', 'heritage'],
+  'cheikh-ould-khayri': ['biographie', 'parcours-spirituel', 'relation-baye-niasse', 'transmission', 'chronologie', 'discours', 'ecrits-poemes', 'temoignages', 'heritage'],
+  'cheikh-ousmane-mbow': [
+    'presentation', 'parcours-mission', 'methodologie', 'enseignements-religieux', 'tijaniyya-fayda', 'cheikh-ibrahim-niasse',
+    'cheikh-ould-khayri', 'explications-textes', 'conferences', 'debats', 'ouvrages', 'videotheque',
+  ],
+  jamah: ['presentation', 'histoire', 'mission', 'organisation', 'implantations', 'rencontres', 'vie-communautaire', 'galerie', 'contact'],
+  bibliotheque: ['recherche', 'documents', 'auteurs', 'videos', 'coran-hadith'],
   actualites: ['articles', 'evenements', 'conferences', 'telechargements'],
 } as const
 
 export type SectionSlug = keyof typeof siteSections
 
-/** Entrées du menu principal (Actualités reste accessible via l'accueil et le pied de page). */
+/** Rubriques consacrées à une personne : gabarit « personne » (sous-navigation, nature des sources). */
+export const personSections: ReadonlySet<SectionSlug> = new Set(['cheikh-ould-khayri', 'cheikh-ousmane-mbow'])
+
+/** Menu principal (Actualités reste accessible depuis l'accueil et le pied de page). */
 export const primaryNav: SectionSlug[] = [
   'jamah',
   'comprendre-islam',
   'tijaniyya',
   'fayda',
-  'maitres',
+  'cheikh-ould-khayri',
+  'cheikh-ousmane-mbow',
   'bibliotheque',
 ]
+
+/** Pages hors rubriques (routes dédiées). */
+export const standalonePages = ['credits'] as const
 
 export function isSection(slug: string): slug is SectionSlug {
   return Object.hasOwn(siteSections, slug)
@@ -34,4 +46,11 @@ export function resolveSitePath(segments: string[]): { section: SectionSlug; chi
   if (rest.length || !section || !isSection(section)) return null
   if (child === undefined) return { section }
   return (siteSections[section] as readonly string[]).includes(child) ? { section, child } : null
+}
+
+/** Vrai si un chemin interne (sans langue) correspond à une page existante. */
+export function isKnownPath(path: string): boolean {
+  const clean = path.split(/[?#]/)[0].replace(/^\/+|\/+$/g, '')
+  if (clean === '' || (standalonePages as readonly string[]).includes(clean)) return true
+  return resolveSitePath(clean.split('/')) !== null
 }

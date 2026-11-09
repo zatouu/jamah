@@ -8,7 +8,7 @@ describe('paths', () => {
   })
 
   it('change de langue en conservant la page', () => {
-    expect(switchLocalePath('/fr/maitres/cheikh-ousmane-mbow', 'ar')).toBe('/ar/maitres/cheikh-ousmane-mbow')
+    expect(switchLocalePath('/fr/cheikh-ousmane-mbow/videotheque', 'ar')).toBe('/ar/cheikh-ousmane-mbow/videotheque')
     expect(switchLocalePath('/ar', 'fr')).toBe('/fr')
   })
 })

@@ -6,7 +6,10 @@ import type { MediaKey } from '@/content/media'
 import { ArrowIcon } from '@/components/icons'
 import { Photo } from '@/components/photo'
 import { SearchForm } from '@/components/search-form'
+import { VideoCard } from '@/components/rubric/video-catalog'
+import { publicVideos } from '@/content/videos'
 import { nextAnnualDate } from '@/lib/calendar'
+import { siteSections } from '@/lib/navigation'
 import { localePath } from '@/lib/paths'
 
 type SectionProps = { locale: Locale; dict: Dictionary }
@@ -121,12 +124,12 @@ export function QuoteBand({ dict }: SectionProps) {
   )
 }
 
-/* ---------- 3. Du Prophète ﷺ à nos maîtres + notre guide ---------- */
+/* ---------- 3. Du Prophète ﷺ à nos maîtres ---------- */
 
 const masterImages: MediaKey[] = ['hilye', 'ainMadhi', 'bayeNiasse', 'dunes']
 
 export function Masters({ locale, dict }: SectionProps) {
-  const { masters, guide } = dict.homePage
+  const { masters } = dict.homePage
   return (
     <Section id="maitres" tone="paper" eyebrow={masters.eyebrow} title={masters.title} lead={masters.lead}>
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -159,22 +162,63 @@ export function Masters({ locale, dict }: SectionProps) {
           </li>
         ))}
       </ol>
+    </Section>
+  )
+}
 
-      <div className="mt-6 flex flex-col gap-5 rounded-card bg-forest-900 p-6 text-ivory md:flex-row md:items-center md:gap-8 md:p-7">
-        <span aria-hidden className="grid size-14 shrink-0 place-items-center rounded-full border border-ivory/25 font-quran text-2xl">ع</span>
-        <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-forest-100/80 rtl:tracking-normal">{guide.eyebrow}</p>
-          <h3 className="mt-1 font-display text-2xl">{guide.title}</h3>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ivory/80">{guide.body}</p>
-          <p className="mt-2 text-xs text-ivory/50">{guide.note}</p>
-        </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
-          <Link href={localePath(locale, 'maitres/cheikh-ousmane-mbow')} className="inline-flex items-center gap-2 rounded-full bg-ivory px-5 py-2.5 text-sm font-medium text-forest-900 hover:bg-forest-50">
-            {guide.cta}
+/* ---------- 4. Le parcours : Islam → … → la Jamah ---------- */
+
+export function Progression({ locale, dict }: SectionProps) {
+  const t = dict.homePage.progression
+  const fmt = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr')
+  return (
+    <Section id="parcours" eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
+      <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        {t.items.map((item, i) => (
+          <li key={item.href} className="relative">
+            <Link href={localePath(locale, item.href)} className={`${cardLink} flex flex-col p-5 lg:min-h-[11rem]`}>
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-full bg-forest-800 text-xs tabular-nums text-ivory">{fmt.format(i + 1)}</span>
+                {i < t.items.length - 1 && <span aria-hidden className="hidden h-px flex-1 bg-gradient-to-r from-ochre/60 to-transparent lg:block rtl:bg-gradient-to-l" />}
+              </span>
+              <span className="mt-4 font-display text-lg leading-snug text-forest-900">{item.title}</span>
+              <span className="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  )
+}
+
+/* ---------- 5. Cheikh Ould Khayri : pilier de la transmission ---------- */
+
+export function KhayriSpotlight({ locale, dict }: SectionProps) {
+  const t = dict.homePage.khayri
+  const section = dict.sections['cheikh-ould-khayri']
+  const labels = section.children as Record<string, string>
+  return (
+    <Section id="cheikh-ould-khayri" tone="paper">
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <Photo id="dunes" locale={locale} sizes="(min-width: 1024px) 45vw, 100vw" className="aspect-[16/10] rounded-card" />
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ochre rtl:tracking-normal">{t.eyebrow}</p>
+          <h2 className="mt-2 font-display text-3xl text-forest-900 md:text-[2.5rem] rtl:leading-[1.4]">{t.title}</h2>
+          {locale === 'fr' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-700">الشيخ ولد خيري</p>}
+          <p className="mt-4 leading-relaxed text-muted">{t.body}</p>
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {siteSections['cheikh-ould-khayri'].map((child) => (
+              <li key={child}>
+                <Link href={localePath(locale, `cheikh-ould-khayri/${child}`)} className="inline-block rounded-full border border-line px-3 py-1.5 text-sm text-ink/80 hover:border-forest-600 hover:text-forest-800">
+                  {labels[child]}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 border-s-2 border-ochre ps-3 text-xs leading-relaxed text-muted">{t.note}</p>
+          <Link href={localePath(locale, 'cheikh-ould-khayri')} className={`${primaryBtn} mt-6`}>
+            {t.cta}
             <ArrowIcon />
-          </Link>
-          <Link href={localePath(locale, 'bibliotheque/videos')} className="inline-flex items-center rounded-full border border-ivory/30 px-5 py-2.5 text-sm text-ivory hover:bg-ivory/10">
-            {guide.videos}
           </Link>
         </div>
       </div>
@@ -182,7 +226,67 @@ export function Masters({ locale, dict }: SectionProps) {
   )
 }
 
-/* ---------- 4. Vie de la communauté ---------- */
+/* ---------- 6. Cheikh Ousmane Mbow : notre guide + vidéos ---------- */
+
+export function MbowSpotlight({ locale, dict }: SectionProps) {
+  const t = dict.homePage.mbow
+  const labels = dict.sections['cheikh-ousmane-mbow'].children as Record<string, string>
+  const videos = publicVideos().slice(0, 3)
+  return (
+    <Section id="cheikh-ousmane-mbow" tone="dark">
+      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-forest-100/80 rtl:tracking-normal">{t.eyebrow}</p>
+          <h2 className="mt-2 font-display text-3xl md:text-[2.5rem] rtl:leading-[1.4]">{t.title}</h2>
+          {locale === 'fr' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-100">الشيخ عثمان امبو</p>}
+          <p className="mt-4 leading-relaxed text-ivory/80">{t.body}</p>
+          <p className="mt-3 text-xs text-ivory/70">{t.note}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link href={localePath(locale, 'cheikh-ousmane-mbow')} className="inline-flex items-center gap-2 rounded-full bg-ivory px-5 py-2.5 text-sm font-medium text-forest-900 hover:bg-forest-50">
+              {t.cta}
+              <ArrowIcon />
+            </Link>
+            <Link href={localePath(locale, 'cheikh-ousmane-mbow/videotheque')} className="inline-flex items-center rounded-full border border-ivory/30 px-5 py-2.5 text-sm text-ivory hover:bg-ivory/10">
+              {t.catalogue}
+            </Link>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          {t.groups.map((group) => (
+            <div key={group.label} className="rounded-card border border-ivory/10 bg-forest-800/60 p-4">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-forest-100/80 rtl:tracking-normal">{group.label}</h3>
+              <ul className="mt-3 space-y-1">
+                {group.items.map((child) => (
+                  <li key={child}>
+                    <Link href={localePath(locale, `cheikh-ousmane-mbow/${child}`)} className="block rounded-md py-1 text-sm text-ivory/90 hover:text-ivory hover:underline">
+                      {labels[child]}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {videos.length > 0 && (
+        <div className="mt-10">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="font-display text-2xl">{dict.homePage.videos.title}</h3>
+            <Link href={localePath(locale, 'cheikh-ousmane-mbow/videotheque')} className="text-sm text-ivory/80 hover:underline">{dict.homePage.videos.cta}</Link>
+          </div>
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {videos.map((video) => (
+              <li key={video.youtube.id} className="text-ink"><VideoCard video={video} dict={dict} /></li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </Section>
+  )
+}
+
+/* ---------- 7. Vie de la communauté ---------- */
 
 const lifeImages: MediaKey[] = ['tasbih', 'medinaBaye', 'enseignement', 'dunes']
 
@@ -207,7 +311,7 @@ export function CommunityLife({ locale, dict }: SectionProps) {
   )
 }
 
-/* ---------- 5. Rendez-vous ---------- */
+/* ---------- 8. Rendez-vous ---------- */
 
 export function Gatherings({ locale, dict }: SectionProps) {
   const t = dict.homePage.gatherings
@@ -230,43 +334,18 @@ export function Gatherings({ locale, dict }: SectionProps) {
               <span className="text-xs text-forest-100/80">{item.place}</span>
             </div>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-ivory/80">{item.body}</p>
-            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-xs text-ivory/50 underline underline-offset-4 hover:text-ivory/80">
+            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-xs text-ivory/70 underline underline-offset-4 hover:text-ivory/80">
               {item.sourceLabel}
             </a>
           </article>
         ))}
       </div>
-      <p className="mt-4 text-xs text-ivory/50">{t.note}</p>
+      <p className="mt-4 text-xs text-ivory/70">{t.note}</p>
     </Section>
   )
 }
 
-/* ---------- 6. Par où commencer ---------- */
-
-export function Paths({ locale, dict }: SectionProps) {
-  const t = dict.homePage.paths
-  const fmt = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr', { minimumIntegerDigits: 2 })
-  return (
-    <Section id="commencer" tone="paper" title={t.title} lead={t.lead}>
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {t.items.map((item, i) => (
-          <li key={item.href}>
-            <Link href={localePath(locale, item.href)} className={`${cardLink} flex flex-col bg-ivory/60 p-5`}>
-              <span className="text-sm tabular-nums text-ochre">{fmt.format(i + 1)}</span>
-              <span className="mt-3 font-display text-lg text-forest-900">{item.title}</span>
-              <span className="mt-1.5 flex-1 text-sm leading-relaxed text-muted">{item.body}</span>
-              <span className="mt-4 text-forest-700 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
-                <ArrowIcon />
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </Section>
-  )
-}
-
-/* ---------- 7. Bibliothèque ---------- */
+/* ---------- 9. Bibliothèque ---------- */
 
 export function LibraryPrinciple({ locale, dict }: SectionProps) {
   const t = dict.homePage.library
@@ -298,7 +377,7 @@ export function LibraryPrinciple({ locale, dict }: SectionProps) {
   )
 }
 
-/* ---------- 8. En images ---------- */
+/* ---------- 10. En images ---------- */
 
 const galleryImages: { id: MediaKey; className: string }[] = [
   { id: 'domeVert', className: 'col-span-2 row-span-2' },
@@ -324,7 +403,7 @@ export function Gallery({ locale, dict }: SectionProps) {
   )
 }
 
-/* ---------- 9. Nous rejoindre ---------- */
+/* ---------- 11. Nous rejoindre ---------- */
 
 export function Join({ locale, dict }: SectionProps) {
   const t = dict.homePage.join

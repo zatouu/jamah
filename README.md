@@ -14,8 +14,9 @@ tools/            Outils hors site (inventaire du corpus existant, import en pha
 docs/             Audit, recherche documentaire, décisions
 ```
 
-Flux : éditeurs → Directus → PostgreSQL ; publication → webhook → Search Service → Elasticsearch ;
-visiteurs → Next.js → (CMS en lecture, Search Service `/v1`).
+Flux cible : éditeurs → Directus → PostgreSQL ; visiteurs → Next.js → (CMS en lecture, API de recherche).
+La recherche et le RAG s'appuieront sur le moteur de **sufi-knowledge** (`D:\sufi-knowledge`), amélioré et exposé
+par une API stable (voir `docs/feuille-de-route.md`, « Décision : recherche et RAG »).
 
 ## Démarrage
 

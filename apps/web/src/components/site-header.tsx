@@ -1,45 +1,42 @@
 import Link from 'next/link'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
-import { primaryNav } from '@/lib/navigation'
+import { primaryNav, siteSections } from '@/lib/navigation'
 import { localePath } from '@/lib/paths'
 import { LanguageSwitcher } from './language-switcher'
-import { MenuIcon, SearchIcon } from './icons'
+import { SearchIcon } from './icons'
+import { DesktopNav, MobileNav, type NavItem } from './site-nav'
 
 type Props = { locale: Locale; dict: Dictionary }
 
 export function SiteHeader({ locale, dict }: Props) {
-  const navLinks = primaryNav.map((slug) => (
-    <li key={slug}>
-      <Link
-        href={localePath(locale, slug)}
-        className="block rounded-lg px-3 py-2 text-[0.95rem] text-ink/80 transition-colors hover:bg-forest-50 hover:text-forest-800"
-      >
-        {dict.sections[slug].label}
-      </Link>
-    </li>
-  ))
+  const items: NavItem[] = primaryNav.map((slug) => {
+    const section = dict.sections[slug]
+    const children = section.children as Record<string, string>
+    return {
+      href: localePath(locale, slug),
+      label: section.label,
+      children: siteSections[slug].map((child) => ({ href: localePath(locale, `${slug}/${child}`), label: children[child] })),
+    }
+  })
+  const labels = { mainNav: dict.a11y.mainNav, openMenu: dict.nav.openMenu, closeMenu: dict.nav.closeMenu, overview: dict.placeholder.overview }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-ivory/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line/70 bg-ivory/90 backdrop-blur-md">
       <div className="container-page flex h-16 items-center gap-4">
-        <Link href={localePath(locale)} className="group flex items-center gap-3" aria-label={dict.meta.siteName}>
+        <Link href={localePath(locale)} className="flex shrink-0 items-center gap-3" aria-label={dict.meta.siteName}>
           <span aria-hidden className="grid size-9 place-items-center rounded-full bg-forest-800 font-display text-sm text-ivory">
             {dict.brand.mark}
           </span>
           <span className="flex flex-col leading-tight">
-            <span className="text-[0.7rem] uppercase tracking-[0.18em] text-muted rtl:tracking-normal">
-              {dict.brand.prefix}
-            </span>
+            <span className="text-[0.7rem] uppercase tracking-[0.18em] text-muted rtl:tracking-normal">{dict.brand.prefix}</span>
             <span className="font-display text-[1.05rem] text-forest-900">{dict.brand.name}</span>
           </span>
         </Link>
 
-        <nav aria-label={dict.a11y.mainNav} className="ms-auto hidden lg:block">
-          <ul className="flex items-center gap-0.5">{navLinks}</ul>
-        </nav>
+        <DesktopNav items={items} labels={labels} />
 
-        <div className="ms-auto flex items-center gap-2 lg:ms-2">
+        <div className="ms-auto flex items-center gap-2 xl:ms-2">
           <Link
             href={localePath(locale, 'bibliotheque/recherche')}
             aria-label={dict.search.label}
@@ -48,21 +45,7 @@ export function SiteHeader({ locale, dict }: Props) {
             <SearchIcon />
           </Link>
           <LanguageSwitcher locale={locale} label={dict.langLabel} ariaLabel={dict.a11y.switchLanguage} />
-
-          <details className="group relative lg:hidden">
-            <summary
-              aria-label={dict.a11y.menu}
-              className="grid size-9 cursor-pointer list-none place-items-center rounded-full text-ink hover:bg-forest-50 [&::-webkit-details-marker]:hidden"
-            >
-              <MenuIcon />
-            </summary>
-            <nav
-              aria-label={dict.a11y.mainNav}
-              className="absolute end-0 top-12 w-64 rounded-card border border-line bg-paper p-2 shadow-[0_12px_40px_-12px_rgb(15_61_46/0.25)]"
-            >
-              <ul>{navLinks}</ul>
-            </nav>
-          </details>
+          <MobileNav items={items} labels={labels} />
         </div>
       </div>
     </header>
