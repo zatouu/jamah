@@ -51,6 +51,25 @@ python -m venv .venv && .venv/Scripts/pip install -r requirements-dev.txt   # Wi
 .venv/Scripts/uvicorn app.main:app --reload
 ```
 
+## Déploiement (préproduction)
+
+Le **site public seul** est déployé sur la VM partagée avec itvision (Debian 13, arm64, 1,8 Go RAM) :
+
+| Élément | Valeur |
+|---|---|
+| URL | https://jamah.52-47-120-35.sslip.io (adresse provisoire en attendant le domaine) |
+| Conteneur | `jamah-web` — `127.0.0.1:8090`, limité à 300 Mo |
+| nginx | `/etc/nginx/sites-available/jamah` (modèle : `apps/web/deploy/nginx-jamah.conf`), certificat Let's Encrypt via certbot |
+| Redéployer | `cd apps/web && SSH_KEY=~/.ssh/utils.pem ./deploy/deploy.sh` |
+
+Le build Next.js est fait **en local** (la VM n'a pas la mémoire pour builder sans gêner itvision) ;
+la VM ne construit qu'une image d'exécution légère (`deploy/Dockerfile.runtime`).
+PostgreSQL, Directus et Elasticsearch **ne sont pas déployés** sur cette VM (mémoire insuffisante) :
+il faudra une machine dédiée (≥ 4 Go) pour les phases 3 et 5.
+
+Passage au domaine définitif : DNS `A` → `52.47.120.35`, remplacer `server_name` dans le site nginx,
+`sudo certbot --nginx -d <domaine>`, puis redéployer avec `SITE_URL=https://<domaine>`.
+
 ## Variables d'environnement
 
 Voir `.env.example` (aucune valeur réelle n'est versionnée).
