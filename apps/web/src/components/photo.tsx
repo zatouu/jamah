@@ -15,8 +15,9 @@ type PhotoProps = {
 
 export function Photo({ id, locale, className = '', imgClassName = '', sizes = '100vw', priority, credit = true }: PhotoProps) {
   const entry = media[id]
+  const position = /(^|\s)!?absolute(\s|$)/.test(className) ? '' : 'relative'
   return (
-    <figure className={`relative overflow-hidden ${className}`}>
+    <figure className={`${position} overflow-hidden ${className.replace('!absolute', 'absolute')}`}>
       <Image
         src={entry.src}
         alt={entry.alt[locale]}

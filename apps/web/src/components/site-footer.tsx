@@ -7,8 +7,8 @@ import { localePath } from '@/lib/paths'
 export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const sections = Object.keys(siteSections) as SectionSlug[]
   return (
-    <footer className="mt-24 border-t border-line bg-sand/60">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-[1.2fr_2fr]">
+    <footer className="border-t border-line bg-sand/60">
+      <div className="container-page grid gap-8 py-10 md:grid-cols-[1.2fr_2fr]">
         <div className="max-w-sm space-y-3">
           <p className="font-display text-xl text-forest-900">{dict.meta.siteName}</p>
           <p className="text-sm leading-relaxed text-muted">{dict.footer.tagline}</p>

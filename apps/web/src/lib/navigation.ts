@@ -4,7 +4,7 @@
  */
 export const siteSections = {
   jamah: ['histoire-mission', 'identite-spirituelle', 'activites', 'contact'],
-  'comprendre-islam': ['coran', 'hadith-sunna', 'croyance', 'jurisprudence', 'spiritualite', 'ethique'],
+  'comprendre-islam': ['le-prophete', 'coran', 'hadith-sunna', 'croyance', 'jurisprudence', 'spiritualite', 'ethique'],
   tijaniyya: ['histoire', 'cheikh-ahmad-tijani', 'wird-wazifa', 'adab', 'textes', 'questions'],
   fayda: ['cheikh-ibrahim-niasse', 'histoire', 'themes', 'oeuvres'],
   maitres: ['cheikh-ould-khayri', 'cheikh-ousmane-mbow'],

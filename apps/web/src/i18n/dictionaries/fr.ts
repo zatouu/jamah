@@ -30,6 +30,7 @@ export const fr = {
       label: 'Comprendre l’islam',
       intro: 'Les fondements, expliqués pas à pas à partir du Coran et de la Sunna.',
       children: {
+        'le-prophete': 'Le Prophète Muhammad ﷺ',
         coran: 'Coran et sciences coraniques',
         'hadith-sunna': 'Hadiths et Sunna',
         croyance: 'Croyance et théologie',
@@ -121,7 +122,6 @@ export const fr = {
         { href: 'maitres/cheikh-ousmane-mbow', title: 'Dars et enseignements', body: 'Les cours et explications de Cheikh Ousmane Mbow, en présentiel et en vidéo.' },
         { href: 'actualites/evenements', title: 'Gamou et ziyāra', body: 'Les grands rassemblements qui unissent les disciples, d’un pays à l’autre.' },
       ],
-      hadraSlot: 'Photo de la ḥaḍra à fournir par la Jamah',
     },
     gatherings: {
       eyebrow: 'Rendez-vous',
@@ -157,15 +157,16 @@ export const fr = {
         { href: 'fayda', title: 'Le Fayḍa Ibrahimiyya', body: 'L’héritage de Cheikh Ibrāhīm Niasse.' },
       ],
     },
-    chain: {
-      title: 'Des fondations aux explications',
-      lead: 'Chaque enseignement est rattaché à sa source.',
+    masters: {
+      eyebrow: 'La chaîne de transmission',
+      title: 'Du Prophète ﷺ à nos maîtres',
+      lead: 'Les enseignements de la Jamah remontent, maillon après maillon, au Prophète ﷺ.',
+      more: 'Découvrir',
       items: [
-        { href: 'comprendre-islam', title: 'Le Coran et la Sunna', body: 'Les fondations' },
-        { href: 'tijaniyya', title: 'La Tijâniyya', body: 'La voie spirituelle' },
-        { href: 'fayda', title: 'Le Fayḍa Ibrahimiyya', body: 'Cheikh Ibrāhīm Niasse' },
-        { href: 'maitres/cheikh-ould-khayri', title: 'Cheikh Ould Khayri', body: 'L’héritage et la transmission' },
-        { href: 'maitres/cheikh-ousmane-mbow', title: 'Cheikh Ousmane Mbow', body: 'L’explication et l’argumentation' },
+        { href: 'comprendre-islam/le-prophete', nameAr: 'سيدنا محمد ﷺ', name: 'Le Prophète Muhammad ﷺ', role: 'Le Sceau des prophètes : le Coran et la Sunna, fondements de tout enseignement.', meta: 'La Mecque · Médine' },
+        { href: 'tijaniyya/cheikh-ahmad-tijani', nameAr: 'الشيخ أحمد التجاني', name: 'Cheikh Ahmad Tijani', role: 'Fondateur de la Tijâniyya, la voie spirituelle.', meta: 'Aïn Madhi 1737 · Fès 1815' },
+        { href: 'fayda/cheikh-ibrahim-niasse', nameAr: 'الشيخ إبراهيم انياس', name: 'Cheikh Ibrāhīm Niasse', role: 'Baye Niasse, maître du Fayḍa Ibrahimiyya.', meta: 'Médina Baye · † 1975' },
+        { href: 'maitres/cheikh-ould-khayri', nameAr: 'الشيخ ولد خيري', name: 'Cheikh Ould Khayri', role: 'L’héritage et la transmission du Fayḍa, depuis Boubacar.', meta: 'Boubacar · Trarza' },
       ],
     },
     guide: {
@@ -173,10 +174,8 @@ export const fr = {
       title: 'Cheikh Ousmane Mbow',
       body: 'Il explique, argumente et confronte les affirmations religieuses aux sources. Ses ouvrages, ses vidéos et ses commentaires sont reliés ici aux textes qu’ils expliquent.',
       note: 'Présentation détaillée en cours de validation par la Jamah.',
-      cta: 'Découvrir ses enseignements',
-      portraitSlot: 'Portrait officiel à fournir par la Jamah',
-      videosTitle: 'Dernières vidéos',
-      videoSlot: 'Vidéo à venir',
+      cta: 'Ses enseignements',
+      videos: 'Vidéothèque',
     },
     library: {
       eyebrow: 'Bibliothèque',
@@ -200,9 +199,7 @@ export const fr = {
     gallery: {
       eyebrow: 'En images',
       title: 'La photothèque de la Jamah',
-      lead: 'Gamou, ziyāra, ḥaḍra, cours : la vie de la communauté en images, publiée avec l’accord des personnes photographiées.',
-      slots: ['Gamou de Boubacar', 'Ḥaḍra du vendredi', 'Dars de Cheikh Ousmane Mbow'],
-      slotSuffix: 'photo à fournir',
+      lead: 'Lieux, manuscrits et moments de la voie. Les photos de la Jamah seront publiées avec l’accord des personnes photographiées.',
       cta: 'Proposer des photos',
     },
     join: {
@@ -210,14 +207,11 @@ export const fr = {
       body: 'Vous découvrez la voie, vous souhaitez rejoindre une assemblée ou annoncer un événement ? Écrivez-nous.',
       cta: 'Nous écrire',
     },
-    news: { title: 'Publications récentes', empty: 'Les premières publications paraîtront après validation éditoriale.' },
-    events: { title: 'Événements à venir', empty: 'Aucun événement annoncé pour le moment.' },
-    seeAll: 'Tout voir',
     photoCredits: 'Crédits photos',
   },
   credits: {
     title: 'Crédits photos',
-    lead: 'En attendant la photothèque de la Jamah, le site utilise des images libres de droits. Elles illustrent des lieux et des objets ; elles ne représentent ni la Jamah ni ses maîtres.',
+    lead: 'En attendant la photothèque de la Jamah, le site utilise des images libres de droits : lieux, manuscrits, objets et une photographie d’archive de Cheikh Ibrāhīm Niasse. Le Prophète ﷺ n’est jamais représenté ; une hilye (description calligraphiée) l’évoque.',
     author: 'Auteur',
     license: 'Licence',
     source: 'Source',

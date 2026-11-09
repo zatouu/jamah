@@ -18,6 +18,8 @@
 - [ ] Relecture de la traduction arabe de l'interface (`apps/web/src/i18n/dictionaries/ar.ts`), en particulier les graphies arabes des noms
 - [ ] Démarrer Docker Desktop et valider `docker compose up` de bout en bout
 - [ ] Photothèque de la Jamah (avec autorisations) pour remplacer les emplacements « photo à fournir » : portrait officiel de Cheikh Ousmane Mbow, Gamou de Boubacar, ḥaḍra, dars
+- [ ] Vérifier les droits de la photographie d'archive de Cheikh Ibrāhīm Niasse (Wikimedia Commons, `File:Ibrahim_Niyass.jpg`, licence CC BY-SA 4.0 déclarée par la personne qui l'a mise en ligne, auteur original inconnu) ou la remplacer par une photo fournie par la Jamah
+- [ ] Image propre à Cheikh Ould Khayri / Boubacar (actuellement : dunes du Trarza)
 - [ ] Vidéos YouTube officielles (identifiants des chaînes et vidéos autorisées)
 - [ ] Texte arabe original de la citation du premier discours de Cheikh Ould Khayri (25/08/1978)
 - [ ] Coordonnées de contact (e-mail, WhatsApp, adresse des assemblées)

@@ -7,11 +7,16 @@ import khaima from '@/assets/media/khaima-dunes-ajouer.jpg'
 import manuscrit from '@/assets/media/manuscrit-chinguetti.jpg'
 import medinaBaye from '@/assets/media/mosquee-medina-baye.jpg'
 import tasbih from '@/assets/media/tasbih.jpg'
+import ainMadhi from '@/assets/media/ain-madhi.jpg'
+import bayeNiasse from '@/assets/media/baye-niasse.jpg'
+import domeVert from '@/assets/media/dome-vert-medine.jpg'
+import hilye from '@/assets/media/hilye-hafiz-osman.jpg'
 
 /**
  * Registre des images. Chaque image porte sa provenance et sa licence.
  * Phase 1 : images libres (Wikimedia Commons) en attendant la photothèque de la Jamah.
- * Ces images illustrent des lieux et objets ; elles ne représentent ni la Jamah ni ses maîtres.
+ * Hormis la photographie d'archive de Cheikh Ibrāhīm Niasse, ces images illustrent des lieux et des objets.
+ * Aucune représentation figurée du Prophète ﷺ : on utilise une hilye (description calligraphiée).
  */
 export type MediaEntry = {
   src: StaticImageData
@@ -76,6 +81,37 @@ export const media = {
     license: 'CC BY-SA 2.5',
     licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.5',
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:MedinaBaayMosque.jpg',
+  },
+  hilye: {
+    src: hilye,
+    alt: { fr: 'Hilye de Hafız Osman (vers 1670) : description calligraphiée du Prophète ﷺ', ar: 'حلية الحافظ عثمان (نحو 1670): وصف النبي ﷺ بالخط' },
+    author: 'Hafız Osman, musée Sadberk Hanım',
+    license: 'Domaine public',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Hilye_by_Hafiz_Osman_from_Sadberk_Hanim_Museum.jpg',
+  },
+  domeVert: {
+    src: domeVert,
+    alt: { fr: 'Le Dôme vert de la mosquée du Prophète ﷺ à Médine', ar: 'القبة الخضراء في المسجد النبوي بالمدينة المنورة' },
+    author: 'TheHadiRahim',
+    license: 'CC0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    sourceUrl: "https://commons.wikimedia.org/wiki/File:Wide_shot_of_the_Green_Dome_at_The_Prophet%27s_Mosque_(Al_Masjid-e-Nabawi).jpg",
+  },
+  ainMadhi: {
+    src: ainMadhi,
+    alt: { fr: 'Panneau indiquant Aïn Madhi (Laghouat, Algérie), lieu de naissance de Cheikh Ahmad Tijani', ar: 'لافتة تشير إلى عين ماضي (الأغواط، الجزائر)، مسقط رأس الشيخ أحمد التجاني' },
+    author: 'Habib kaki',
+    license: 'CC0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ain_Madhi_-_Laghouat_%D8%B9%D9%8A%D9%86_%D9%85%D8%A7%D8%B6%D9%8A_-_%D8%A7%D9%84%D8%A7%D8%BA%D9%88%D8%A7%D8%B7.jpg',
+  },
+  bayeNiasse: {
+    src: bayeNiasse,
+    alt: { fr: 'Cheikh Ibrāhīm Niasse (photographie d’archive)', ar: 'الشيخ إبراهيم انياس (صورة أرشيفية)' },
+    author: 'Wallabokk (Wikimedia Commons)',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ibrahim_Niyass.jpg',
   },
 } satisfies Record<string, MediaEntry>
 

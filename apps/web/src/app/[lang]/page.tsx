@@ -5,12 +5,12 @@ import {
   CommunityLife,
   Gallery,
   Gatherings,
-  Guide,
   Hero,
+  Join,
   LibraryPrinciple,
+  Masters,
   Paths,
   QuoteBand,
-  UpdatesAndJoin,
 } from '@/components/home/sections'
 
 // Régénération quotidienne (compte à rebours du Gamou).
@@ -27,13 +27,13 @@ export default async function HomePage({ params }: Params) {
     <>
       <Hero {...props} />
       <QuoteBand {...props} />
+      <Masters {...props} />
       <CommunityLife {...props} />
       <Gatherings {...props} />
-      <Guide {...props} />
       <Paths {...props} />
       <LibraryPrinciple {...props} />
       <Gallery {...props} />
-      <UpdatesAndJoin {...props} />
+      <Join {...props} />
     </>
   )
 }
