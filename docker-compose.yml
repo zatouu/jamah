@@ -1,4 +1,4 @@
-# Environnement de développement — Jamah Sayroul Eubeud
+# Environnement de développement — Jamah Sayroul Abad
 # Démarrage : cp .env.example .env && docker compose up -d
 name: jamah
 
@@ -71,6 +71,9 @@ services:
       SEARCH_ES_URL: ${SEARCH_ES_URL}
       SEARCH_INDEX_PREFIX: ${SEARCH_INDEX_PREFIX}
       SEARCH_INDEX_TOKEN: ${SEARCH_INDEX_TOKEN}
+      SEARCH_EMBEDDING_MODEL: ${SEARCH_EMBEDDING_MODEL}
+    volumes:
+      - ./data/models:/home/app/models
     ports:
       - "8000:8000"
 

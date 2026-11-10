@@ -1,4 +1,4 @@
-# Jamah Sayroul Eubeud — site officiel
+# Jamah Sayroul Abad — site officiel
 
 Plateforme éditoriale, pédagogique et documentaire : Coran et Sunna, Tijâniyya, Fayḍa Ibrahimiyya,
 héritage de Cheikh Ould Khayri et enseignements de Cheikh Ousmane Mbow. Français et arabe (wolof prévu).

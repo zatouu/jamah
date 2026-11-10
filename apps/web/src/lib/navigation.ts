@@ -12,6 +12,7 @@ export const siteSections = {
     'presentation', 'parcours-mission', 'methodologie', 'enseignements-religieux', 'tijaniyya-fayda', 'cheikh-ibrahim-niasse',
     'cheikh-ould-khayri', 'explications-textes', 'conferences', 'debats', 'ouvrages', 'videotheque',
   ],
+  awliya: ['presentation', 'compagnons-ahl-al-bayt', 'figures-tijaniyya', 'afrique-ouest', 'autres-voies', 'ecrits-poemes'],
   jamah: ['presentation', 'histoire', 'mission', 'organisation', 'implantations', 'rencontres', 'vie-communautaire', 'galerie', 'contact'],
   bibliotheque: ['recherche', 'documents', 'auteurs', 'videos', 'coran-hadith'],
   actualites: ['articles', 'evenements', 'conferences', 'telechargements'],
@@ -30,6 +31,7 @@ export const primaryNav: SectionSlug[] = [
   'fayda',
   'cheikh-ould-khayri',
   'cheikh-ousmane-mbow',
+  'awliya',
   'bibliotheque',
 ]
 

@@ -1,7 +1,7 @@
 # Audit du dépôt `sufi-knowledge` (Ma'rifa) — Phase 1
 
 > Dépôt audité : `D:\sufi-knowledge` (Next.js 16.1.3, React 19, MongoDB, BullMQ/Redis, Gemini/LLM local).
-> Objectif : décider ce qui peut servir au site de la Jamah Sayroul Eubeud.
+> Objectif : décider ce qui peut servir au site de la Jamah Sayroul Abad.
 > Décision : **nouveau dépôt `jamah-site`**, avec portage ciblé de modules de l'existant.
 
 ## 1. État constaté

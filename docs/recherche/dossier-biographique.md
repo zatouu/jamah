@@ -122,7 +122,7 @@ comme **convictions de la communauté**, distincts des faits historiques indépe
 ## 5. Questions à poser à la Jamah
 
 1. Quelle date et quel lieu de naissance la Jamah retient-elle pour Cheikh Ould Khayri (12/04/1955 ou 26/04/1954, Zarâriya/Jarari ?), et sur quels témoins ou documents ?
-2. Quel est le prénom exact du père ? Graphie arabe officielle des noms (Ould Khayri / ولد خيري ? Sayroul Eubeud / سير العبيد ?).
+2. Quel est le prénom exact du père ? Graphie arabe officielle des noms (Ould Khayri / ولد خيري ? Sayroul Abad (confirmé le 10/11/2026) / graphie arabe à confirmer ?).
 3. Quelle version du récit du nom (et de la datte, du turban) est retenue ? Qui sont les témoins (Ould Nahwi, autres) ?
 4. Les poèmes et écrits sur Jarari, la gratitude, la relation avec Baye : textes, auteurs, éditions, droits ?
 5. La bibliographie complète de Cheikh Ousmane Mbow, avec éditions et autorisations de diffusion.

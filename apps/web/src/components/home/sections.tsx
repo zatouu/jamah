@@ -18,9 +18,9 @@ type SectionProps = { locale: Locale; dict: Dictionary }
 
 const tones = {
   ivory: 'bg-ivory',
-  paper: 'bg-paper border-y border-line',
-  sand: 'bg-sand/70',
-  dark: 'bg-forest-900 text-ivory',
+  paper: 'mx-2 my-3 rounded-panel bg-paper shadow-soft md:mx-4',
+  sand: 'mx-2 my-3 rounded-panel bg-sand/70 md:mx-4',
+  dark: 'mx-2 my-3 rounded-panel bg-forest-900 text-ivory md:mx-4',
 } as const
 
 type SectionShellProps = {
@@ -65,7 +65,7 @@ function Section({ id, tone = 'ivory', eyebrow, title, lead, action, children, c
 }
 
 const primaryBtn = 'inline-flex items-center gap-2 rounded-full bg-forest-800 px-5 py-2.5 text-sm font-medium text-ivory transition-colors hover:bg-forest-700'
-const cardLink = 'group block h-full rounded-card border border-line bg-paper transition duration-300 hover:-translate-y-0.5 hover:border-forest-600/40 hover:shadow-[0_18px_40px_-24px_rgb(15_61_46/0.35)]'
+const cardLink = 'group block h-full rounded-card bg-paper shadow-soft ring-1 ring-line/60 transition duration-300 hover:-translate-y-1 hover:ring-forest-600/30 hover:shadow-[0_24px_48px_-24px_rgb(15_61_46/0.4)]'
 
 /* ---------- 1. Accueil ---------- */
 
@@ -318,13 +318,15 @@ export function Gatherings({ locale, dict }: SectionProps) {
   const { date, daysLeft } = nextAnnualDate(4, 20)
   const fmtDate = new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'fr', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
   const fmtNum = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr')
+  const plural = new Intl.PluralRules(locale === 'ar' ? 'ar' : 'fr').select(daysLeft)
+  const daysText = t.daysLeft[plural === 'zero' ? 'other' : plural]
   return (
     <Section id="rendez-vous" tone="dark" eyebrow={t.eyebrow} title={t.title}>
       <Photo id="dunes" locale={locale} credit={false} className="absolute inset-0 -z-10 opacity-15" />
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="rounded-card border border-ivory/15 bg-ivory/[0.07] p-6 backdrop-blur-sm">
           <p className="text-sm text-ivory/70">{t.countdownLabel}</p>
-          <p className="mt-2 font-display text-5xl tabular-nums">{daysLeft === 0 ? t.today : t.daysLeft.replace('{n}', fmtNum.format(daysLeft))}</p>
+          <p className="mt-2 font-display text-5xl tabular-nums">{daysLeft === 0 ? t.today : daysText.replace('{n}', fmtNum.format(daysLeft))}</p>
           <p className="mt-2 text-sm text-ivory/70">{fmtDate.format(date)}</p>
         </div>
         {t.items.map((item) => (

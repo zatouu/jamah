@@ -12,7 +12,7 @@ export function siteJsonLd(locale: Locale, dict: Dictionary) {
       {
         '@type': 'Organization',
         '@id': `${siteUrl}/#organization`,
-        name: 'Jamah Sayroul Eubeud',
+        name: 'Jamah Sayroul Abad',
         alternateName: 'جماعة سير العبيد',
         url: siteUrl,
         description: dict.meta.description,

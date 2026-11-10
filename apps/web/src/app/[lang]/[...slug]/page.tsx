@@ -113,7 +113,7 @@ function SectionOverview(page: PageData) {
               <li key={child}>
                 <Link
                   href={localePath(lang, `${slug}/${child}`)}
-                  className="group flex h-full items-start gap-4 rounded-card border border-line bg-paper p-4 transition hover:-translate-y-0.5 hover:border-forest-600/40"
+                  className="group flex h-full items-start gap-4 rounded-card bg-paper p-4 shadow-soft ring-1 ring-line/60 transition hover:-translate-y-0.5 hover:ring-forest-600/30"
                 >
                   <span className="pt-0.5 text-sm tabular-nums text-ochre">{fmt.format(i + 1)}</span>
                   <span className="flex-1 text-ink">{childLabels[child]}</span>
@@ -188,13 +188,13 @@ function ChildPage(page: PageData & { child: string }) {
 
           <nav className="mt-10 grid gap-3 border-t border-line pt-6 sm:grid-cols-2" aria-label={dict.placeholder.subsections}>
             {prev ? (
-              <Link href={localePath(lang, `${slug}/${prev}`)} className="group rounded-card border border-line bg-paper p-4 hover:border-forest-600/40">
+              <Link href={localePath(lang, `${slug}/${prev}`)} className="group rounded-card bg-paper p-4 shadow-soft ring-1 ring-line/60 hover:ring-forest-600/30">
                 <span className="flex items-center gap-2 text-forest-700"><span className="rotate-180"><ArrowIcon /></span></span>
                 <span className="mt-1 block text-sm text-ink">{childLabels[prev]}</span>
               </Link>
             ) : <span />}
             {next && (
-              <Link href={localePath(lang, `${slug}/${next}`)} className="group rounded-card border border-line bg-paper p-4 text-end hover:border-forest-600/40">
+              <Link href={localePath(lang, `${slug}/${next}`)} className="group rounded-card bg-paper p-4 text-end shadow-soft ring-1 ring-line/60 hover:ring-forest-600/30">
                 <span className="flex items-center justify-end gap-2 text-forest-700"><ArrowIcon /></span>
                 <span className="mt-1 block text-sm text-ink">{childLabels[next]}</span>
               </Link>
