@@ -6,22 +6,24 @@ Feuille de route validée (prompt directeur, novembre 2026). Chaque phase se ter
 |---|---|---|
 | 0 | Socle : monorepo, site FR/AR, dossier biographique v0, CI, déploiement de préproduction | ✅ |
 | 1 | Consolidation : plan du site conforme au prompt, navigation, gabarits de rubrique et de personne, accueil (parcours, Cheikh Ould Khayri, Cheikh Ousmane Mbow), recherche honnête, SEO/sécurité | ✅ livré (voir bilan) |
-| 2 | Bibliothèque et catalogue YouTube : modèles documents/vidéos, CMS, import YouTube Data API, catégorisation, pages vidéo, associations, administration ; **raccordement de la recherche à sufi-knowledge** | à venir |
-| 3 | Gestion documentaire avancée : textes AR/FR, traductions, translittérations, commentaires, références, transcriptions, chapitrage, validation | à venir |
-| 4 | Recherche : amélioration du moteur de sufi-knowledge (normalisation arabe, bilingue, filtres, transcriptions), Elasticsearch si nécessaire | à venir |
-| 5 | Intelligence documentaire : recherche hybride, RAG sourcé (sufi-knowledge), recommandations validées | à venir |
+| 2 | Bibliothèque et catalogue YouTube : modèles documents/vidéos, CMS Directus, import YouTube (chaîne SAYROUL ABAD `UCaUPqk9qgC9tkh16mZF6OCQ`), pages vidéo, administration ; **recherche hybride v1 (Elasticsearch)** | en cours |
+| 3 | Gestion documentaire avancée : textes AR/FR, traductions, translittérations, commentaires, références, transcriptions, chapitrage, validation ; **migration ponctuelle du corpus utile de sufi-knowledge** | à venir |
+| 4 | Recherche avancée : filtres, renvois Coran / hadith / écrits des saints, transcriptions wolof, lecteur comparatif et apprentissage des poèmes (portés de sufi-knowledge) | à venir |
+| 5 | Intelligence documentaire : RAG sourcé sur les passages publiés, recommandations validées | à venir |
 
-## Décision : recherche et RAG
+## Décision (10/11/2026) : recherche sur Elasticsearch, sufi-knowledge comme source
 
-La recherche du site s'appuiera sur **sufi-knowledge** (recherche hybride texte + vecteurs, chat RAG avec citations),
-à améliorer. Le site n'appellera ce moteur que par une API stable (proxy côté serveur), afin de pouvoir le faire évoluer
-sans réécrire le frontend. `services/search` (FastAPI) reste en attente : à conserver comme façade ou à retirer en phase 2.
-
-Points à traiter avant raccordement (constatés à l'audit de sufi-knowledge) :
-- la base MongoDB Atlas configurée n'existe plus (DNS introuvable) : nouvelle base ou dump à fournir ;
-- la route de recherche (1 564 lignes) doit être isolée derrière une API documentée (paramètres, format des résultats, citations) ;
-- le corpus doit porter statut de validation, nature des sources et droits, comme le modèle du site ;
-- le RAG ne doit répondre qu'à partir de documents publiés et toujours afficher ses références.
+- Nom confirmé : **Jamah Sayroul Abad** (graphie arabe à confirmer).
+- Nouvelle rubrique **Awliyâ’** (الأولياء) pour les saints et savants hors des grandes figures du site.
+- La recherche est servie par `services/search` (FastAPI) sur **Elasticsearch**, sans dépendance à MongoDB Atlas :
+  - mot à mot : analyseurs arabe / français (ICU), tolérance aux fautes, expression exacte entre guillemets ;
+  - sémantique : vecteurs multilingues calculés localement (fastembed, aucune API externe) ;
+  - fusion des deux classements par RRF ; seuls les contenus `published` sont indexés et cherchables.
+- **sufi-knowledge** n'est plus un service à raccorder : c'est une **source** dont on migre une fois les données utiles
+  (après réactivation du cluster Atlas et inventaire `tools/inventory-mongo`) et dont on porte des modules
+  (normalisation arabe — déjà reprise —, citations, découpage, lecteur comparatif, apprentissage des poèmes).
+- Directus est la source de vérité du contenu ; il alimente l'index via `POST /v1/documents` (jeton `SEARCH_INDEX_TOKEN`).
+- Le RAG (phase 5) ne répondra qu'à partir de passages publiés, toujours avec ses références.
 
 ## Bilan de la phase 1
 

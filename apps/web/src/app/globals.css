@@ -17,7 +17,9 @@
   --color-ochre: #8a5a1c;
   --color-ochre-soft: #f5ecdd;
 
-  --radius-card: 1rem;
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+  --shadow-soft: 0 1px 2px rgb(15 61 46 / 0.04), 0 12px 32px -16px rgb(15 61 46 / 0.22);
 }
 
 @theme inline {
@@ -64,10 +66,12 @@
 }
 
 @utility font-display {
-  font-family: var(--font-serif);
-  letter-spacing: -0.015em;
+  font-family: var(--font-sans);
+  font-weight: 650;
+  letter-spacing: -0.03em;
   [dir="rtl"] & {
     font-family: var(--font-arabic);
+    font-weight: 700;
     letter-spacing: 0;
   }
 }

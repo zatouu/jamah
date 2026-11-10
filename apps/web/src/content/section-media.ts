@@ -7,6 +7,7 @@ export const sectionMedia: Partial<Record<SectionSlug, MediaKey>> = {
   tijaniyya: 'ainMadhi',
   fayda: 'bayeNiasse',
   'cheikh-ould-khayri': 'dunes',
+  awliya: 'manuscrit',
   jamah: 'khaima',
   bibliotheque: 'fatiha',
   actualites: 'medinaBaye',

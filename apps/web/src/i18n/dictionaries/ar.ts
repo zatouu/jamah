@@ -96,6 +96,18 @@ export const ar: Dictionary = {
         videotheque: 'الفهرس المرئي',
       },
     },
+    awliya: {
+      label: 'الأولياء',
+      intro: 'أولياء وعلماء ومشايخ من التراث، سوى الأعلام الكبار للجماعة: سيرهم وكتاباتهم وقصائدهم.',
+      children: {
+        presentation: 'من هم الأولياء؟',
+        'compagnons-ahl-al-bayt': 'الصحابة وآل البيت',
+        'figures-tijaniyya': 'أعلام الطريقة التجانية',
+        'afrique-ouest': 'أولياء وعلماء غرب إفريقيا',
+        'autres-voies': 'مشايخ الطرق الصوفية الأخرى',
+        'ecrits-poemes': 'كتاباتهم وقصائدهم',
+      },
+    },
     jamah: {
       label: 'الجماعة',
       intro: 'جماعة سير العبيد: تاريخها ورسالتها وأماكنها وحياتها.',
@@ -170,7 +182,7 @@ export const ar: Dictionary = {
       eyebrow: 'المواعيد',
       title: 'التجمعات الكبرى في السنة',
       countdownLabel: 'المولد القادم في 20 أبريل ببوبكر',
-      daysLeft: 'بعد {n} يومًا',
+      daysLeft: { one: 'بعد يوم واحد', two: 'بعد يومين', few: 'بعد {n} أيام', many: 'بعد {n} يومًا', other: 'بعد {n} يوم' },
       today: 'اليوم',
       items: [
         {
@@ -183,7 +195,7 @@ export const ar: Dictionary = {
         {
           title: 'قاموات',
           place: 'بوبكر',
-          body: 'احتفال يُقام بعد أسبوع من المولد في مدينة باي.',
+          body: 'احتفال يُقام بعد أسبوع من مولد مدينة باي.',
           sourceLabel: 'EnQuête+، 13 أبريل 2025',
           sourceUrl: 'https://www.enqueteplus.com/content/la-cit%C3%A9-de-boubacar-un-h%C3%A9ritage-de-baye-niass-en-plein-d%C3%A9sert-mauritanien',
         },
@@ -211,7 +223,7 @@ export const ar: Dictionary = {
       items: [
         { href: 'comprendre-islam/le-prophete', nameAr: 'سيدنا محمد ﷺ', name: 'Le Prophète Muhammad ﷺ', role: 'خاتم النبيين: القرآن والسنة أصل كل تعليم.', meta: 'مكة المكرمة · المدينة المنورة' },
         { href: 'tijaniyya/cheikh-ahmad-tijani', nameAr: 'الشيخ أحمد التجاني', name: 'Cheikh Ahmad Tijani', role: 'مؤسس الطريقة التجانية.', meta: 'عين ماضي 1737 · فاس 1815' },
-        { href: 'fayda/cheikh-ibrahim-niasse', nameAr: 'الشيخ إبراهيم انياس', name: 'Cheikh Ibrāhīm Niasse', role: 'باي انياس، صاحب الفيضة الإبراهيمية.', meta: 'مدينة باي · † 1975' },
+        { href: 'fayda/cheikh-ibrahim-niasse', nameAr: 'الشيخ إبراهيم انياس', name: 'Cheikh Ibrāhīm Niasse', role: 'باي انياس، صاحب الفيضة الإبراهيمية.', meta: 'مدينة باي · ت 1975م' },
         { href: 'cheikh-ould-khayri', nameAr: 'الشيخ ولد خيري', name: 'Cheikh Ould Khayri', role: 'إرث الفيضة وسندها، من بوبكر.', meta: 'بوبكر · الترارزة' },
       ],
     },
@@ -324,6 +336,11 @@ export const ar: Dictionary = {
     comingBody: 'محرك البحث الوثائقي قيد الربط. سيبحث في النصوص وترجماتها والتعليقات والمرئيات، بالعربية والفرنسية، وستذكر كل نتيجة مصدرها.',
     yourQuery: 'بحثك',
     browse: 'في الأثناء، تصفّح الأقسام',
+    results: 'النتائج: {n}',
+    noResultsTitle: 'لا توجد نتائج',
+    noResultsBody: 'جرّب كلمة أخرى أو رسمًا مختلفًا أو الفكرة نفسها بالفرنسية.',
+    exactHint: 'نصيحة: ضع العبارة بين علامتي تنصيص للبحث عنها بلفظها.',
+    semanticMatch: 'معنى قريب',
   },
   video: {
     emptyTitle: 'الفهرس قيد الإعداد',

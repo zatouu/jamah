@@ -25,7 +25,7 @@ export function SourceNatureBadge({ nature, dict }: { nature: keyof Dictionary['
 export function SourceNatureLegend({ dict }: { dict: Dictionary }) {
   const t = dict.sourceNatures
   return (
-    <section className="rounded-card border border-line bg-paper p-5">
+    <section className="rounded-card bg-paper p-5 shadow-soft ring-1 ring-line/60">
       <h2 className="font-display text-lg text-forest-900">{t.title}</h2>
       <p className="mt-1 text-sm text-muted">{t.lead}</p>
       <dl className="mt-4 space-y-3">
@@ -42,7 +42,7 @@ export function SourceNatureLegend({ dict }: { dict: Dictionary }) {
 
 export function ExpectedContent({ kinds, dict }: { kinds: ContentKind[]; dict: Dictionary }) {
   return (
-    <section className="rounded-card border border-dashed border-forest-600/30 bg-forest-50/50 p-5">
+    <section className="rounded-card bg-forest-50/70 p-5">
       <h2 className="font-display text-lg text-forest-900">{dict.placeholder.expected}</h2>
       <ul className="mt-3 flex flex-wrap gap-2">
         {kinds.map((kind) => (

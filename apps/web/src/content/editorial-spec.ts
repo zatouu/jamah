@@ -13,6 +13,7 @@ const sectionDefaults: Record<SectionSlug, ContentKind[]> = {
   fayda: ['article', 'document', 'extract', 'translation', 'commentary', 'video'],
   'cheikh-ould-khayri': ['biography', 'chronology', 'speech', 'poem', 'testimony', 'document', 'photo'],
   'cheikh-ousmane-mbow': ['video', 'commentary', 'article', 'reference', 'document'],
+  awliya: ['biography', 'document', 'poem', 'extract', 'translation', 'reference'],
   jamah: ['article', 'photo', 'event', 'video'],
   bibliotheque: ['document', 'extract', 'translation', 'commentary', 'video'],
   actualites: ['article', 'event', 'photo', 'video'],
@@ -34,6 +35,8 @@ const overrides: Partial<Record<`${SectionSlug}/${string}`, ContentKind[]>> = {
   'cheikh-ousmane-mbow/ouvrages': ['document', 'extract', 'commentary'],
   'cheikh-ousmane-mbow/videotheque': ['video'],
   'cheikh-ousmane-mbow/debats': ['video', 'reference', 'commentary'],
+  'awliya/presentation': ['article', 'reference'],
+  'awliya/ecrits-poemes': ['poem', 'document', 'extract', 'translation', 'commentary'],
   'jamah/rencontres': ['event', 'photo', 'video'],
   'jamah/galerie': ['photo', 'video'],
   'jamah/implantations': ['article', 'photo'],
@@ -46,4 +49,4 @@ export function expectedContent(section: SectionSlug, child?: string): ContentKi
 }
 
 /** Rubriques où la nature des informations doit être explicitée (biographies, récits). */
-export const sourceSensitiveSections: ReadonlySet<SectionSlug> = new Set(['cheikh-ould-khayri', 'fayda', 'tijaniyya', 'cheikh-ousmane-mbow'])
+export const sourceSensitiveSections: ReadonlySet<SectionSlug> = new Set(['cheikh-ould-khayri', 'fayda', 'tijaniyya', 'cheikh-ousmane-mbow', 'awliya'])

@@ -1,7 +1,7 @@
 export const fr = {
   meta: {
-    siteName: 'Jamah Sayroul Eubeud',
-    title: 'Jamah Sayroul Eubeud — Islam, Tijâniyya et Fayḍa à la lumière des sources',
+    siteName: 'Jamah Sayroul Abad',
+    title: 'Jamah Sayroul Abad — Islam, Tijâniyya et Fayḍa à la lumière des sources',
     description:
       'Plateforme éditoriale et documentaire : Coran et Sunna, Tijâniyya, Fayḍa Ibrahimiyya, héritage de Cheikh Ould Khayri et enseignements de Cheikh Ousmane Mbow.',
   },
@@ -12,7 +12,7 @@ export const fr = {
     breadcrumb: 'Fil d’Ariane',
     switchLanguage: 'Lire en arabe',
   },
-  brand: { prefix: 'Jamah', name: 'Sayroul Eubeud', mark: 'J' },
+  brand: { prefix: 'Jamah', name: 'Sayroul Abad', mark: 'J' },
   langLabel: 'العربية',
   home: 'Accueil',
   sections: {
@@ -92,9 +92,21 @@ export const fr = {
         videotheque: 'Catalogue audiovisuel',
       },
     },
+    awliya: {
+      label: 'Awliyâ’',
+      intro: 'Saints, savants et maîtres de la tradition, au-delà des grandes figures de la Jamah : leurs vies, leurs écrits et leurs poèmes.',
+      children: {
+        presentation: 'Qui sont les awliyâ’ ?',
+        'compagnons-ahl-al-bayt': 'Compagnons et Ahl al-Bayt',
+        'figures-tijaniyya': 'Figures de la Tijâniyya',
+        'afrique-ouest': 'Saints et savants d’Afrique de l’Ouest',
+        'autres-voies': 'Maîtres des autres voies soufies',
+        'ecrits-poemes': 'Leurs écrits et poèmes',
+      },
+    },
     jamah: {
       label: 'La Jamah',
-      intro: 'La communauté Sayroul Eubeud : son histoire, sa mission, ses lieux et sa vie.',
+      intro: 'La communauté Sayroul Abad : son histoire, sa mission, ses lieux et sa vie.',
       children: {
         presentation: 'Présentation de la Jamah',
         histoire: 'Histoire et fondation',
@@ -138,7 +150,7 @@ export const fr = {
   },
   homePage: {
     greeting: 'As-salāmu ʿalaykum · Dalal ak jàmm',
-    title: 'Bienvenue dans la Jamah Sayroul Eubeud',
+    title: 'Bienvenue dans la Jamah Sayroul Abad',
     lead: 'Une communauté de disciples réunie autour du Coran, de la Sunna et de la voie de Baye Niasse, attachée à l’héritage de Cheikh Ould Khayri et aux enseignements de Cheikh Ousmane Mbow.',
     ctaPrimary: 'Découvrir la Jamah',
     ctaSecondary: 'Explorer les enseignements',
@@ -166,7 +178,7 @@ export const fr = {
       eyebrow: 'Rendez-vous',
       title: 'Les grands rassemblements de l’année',
       countdownLabel: 'Prochain Gamou du 20 avril à Boubacar',
-      daysLeft: 'dans {n} jours',
+      daysLeft: { one: 'dans {n} jour', two: 'dans {n} jours', few: 'dans {n} jours', many: 'dans {n} jours', other: 'dans {n} jours' } as Record<Exclude<Intl.LDMLPluralRule, 'zero'>, string>,
       today: 'aujourd’hui',
       items: [
         {
@@ -207,8 +219,8 @@ export const fr = {
       items: [
         { href: 'comprendre-islam/le-prophete', nameAr: 'سيدنا محمد ﷺ', name: 'Le Prophète Muhammad ﷺ', role: 'Le Sceau des prophètes : le Coran et la Sunna, fondements de tout enseignement.', meta: 'La Mecque · Médine' },
         { href: 'tijaniyya/cheikh-ahmad-tijani', nameAr: 'الشيخ أحمد التجاني', name: 'Cheikh Ahmad Tijani', role: 'Fondateur de la Tijâniyya, la voie spirituelle.', meta: 'Aïn Madhi 1737 · Fès 1815' },
-        { href: 'fayda/cheikh-ibrahim-niasse', nameAr: 'الشيخ إبراهيم انياس', name: 'Cheikh Ibrāhīm Niasse', role: 'Baye Niasse, maître du Fayḍa Ibrahimiyya.', meta: 'Médina Baye · † 1975' },
-        { href: 'cheikh-ould-khayri', nameAr: 'الشيخ ولد خيري', name: 'Cheikh Ould Khayri', role: 'L’héritage et la transmission du Fayḍa, depuis Boubacar.', meta: 'Boubacar · Trarza' },
+        { href: 'fayda/cheikh-ibrahim-niasse', nameAr: 'الشيخ إبراهيم انياس', name: 'Cheikh Ibrāhīm Niasse', role: 'Baye Niasse, maître de la Fayḍa Ibrahimiyya.', meta: 'Médina Baye · m. 1975' },
+        { href: 'cheikh-ould-khayri', nameAr: 'الشيخ ولد خيري', name: 'Cheikh Ould Khayri', role: 'L’héritage et la transmission de la Fayḍa, depuis Boubacar.', meta: 'Boubacar · Trarza' },
       ],
     },
     khayri: {
@@ -311,7 +323,7 @@ export const fr = {
       testimony: { label: 'Témoignage', body: 'Rapporté par une personne identifiée.' },
       community: { label: 'Récit de la communauté', body: 'Transmis dans la communauté ; source historique non encore établie.' },
       interpretation: { label: 'Interprétation spirituelle', body: 'Lecture spirituelle d’un fait ou d’un texte.' },
-      jamah: { label: 'Position de la Jamah', body: 'Orientation propre à la Jamah Sayroul Eubeud.' },
+      jamah: { label: 'Position de la Jamah', body: 'Orientation propre à la Jamah Sayroul Abad.' },
     },
   },
   searchPage: {
@@ -320,6 +332,11 @@ export const fr = {
     comingBody: 'Le moteur de recherche documentaire est en cours de raccordement. Il interrogera les textes, leurs traductions, les commentaires et les vidéos, en français et en arabe, et chaque résultat citera sa source.',
     yourQuery: 'Votre recherche',
     browse: 'En attendant, parcourez les rubriques',
+    results: 'Résultats : {n}',
+    noResultsTitle: 'Aucun résultat',
+    noResultsBody: 'Essayez un autre mot, une graphie différente ou la même idée en arabe.',
+    exactHint: 'Astuce : mettez une expression entre guillemets pour la chercher mot pour mot.',
+    semanticMatch: 'Sens proche',
   },
   video: {
     emptyTitle: 'Catalogue en cours de constitution',
@@ -336,7 +353,7 @@ export const fr = {
   },
   notFound: { title: 'Page introuvable', body: 'Cette adresse ne correspond à aucune page du site.' },
   footer: {
-    tagline: 'Plateforme éditoriale et documentaire de la Jamah Sayroul Eubeud.',
+    tagline: 'Plateforme éditoriale et documentaire de la Jamah Sayroul Abad.',
     editorial: 'Chaque texte est publié avec ses références, après vérification éditoriale.',
     explore: 'Explorer',
     rights: 'Tous droits réservés.',
