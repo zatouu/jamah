@@ -64,16 +64,23 @@ Fait :
   contre un faux Directus. **Non vérifié** : `npm run lint/typecheck/build`, Directus 11 réel (nom de la politique Public,
   flow `request` vers un hôte interne), rendu visuel.
 
-Suite (dans l'ordre) :
+- Transcription : collection `transcriptions` (une par vidéo, `segments` JSON `{start, end, original, fr, ar, note}` en
+  secondes) éditée par l'extension sans build `cms/extensions/jamah-transcription` (lecteur YouTube via postMessage, ou
+  fichier `videos.media_file`). CSP Directus : `frame-src` youtube-nocookie dans le compose. Pas encore affichée sur le site.
+- Transfert entre postes : `git bundle` (pas de push depuis ce poste).
+
+Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche est reportée en 2e partie :
 1. Valider sur une machine avec Node/Docker : `npm ci && npm run lint && npm run typecheck && npm test && npm run build`,
-   puis `docker compose up -d` + `cms-setup`, publication d'une page test, vérification du flow.
-2. Indexation recherche depuis Directus (flow → `POST /v1/documents`).
+   puis `docker compose up -d` + `cms-setup`, publication d'une page test, vérification du flow, essai de l'interface
+   de transcription (YouTube et fichier).
+2. Extraits commentés : collection `excerpts` (vidéo, début/fin, commentaire FR/AR) et affichage des transcriptions publiées.
 3. Import YouTube : flux RSS de la chaîne → vidéos en `draft` ; clé YouTube Data API plus tard pour l'historique complet.
 4. sufi-knowledge : réactiver le cluster Atlas, commiter ses 217 modifications, `tools/inventory-mongo`, migration ponctuelle
    des documents utiles en `draft` (droits vérifiés) ; porter citations, découpage, lecteur comparatif, apprentissage des poèmes.
 5. Déploiement : site sur la VM partagée (`SEARCH_API_URL` vers la VM dédiée) ; Directus + Postgres + Elasticsearch + search
    sur la VM dédiée (4 Go conseillés avec Elasticsearch et le modèle sémantique).
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
+7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses).
 
 À obtenir de la Jamah : graphie arabe du nom, présentation de la Jamah, contact, présentation validée de Cheikh Ousmane Mbow
 et portrait (avec accord), réponses au dossier biographique §5, photos (auteur, date, accord), premiers écrits de Cheikh

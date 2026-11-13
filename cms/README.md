@@ -43,6 +43,19 @@ Pour chaque image, renseigner l'auteur, la licence et la source : la page Crédi
 - Corps en Markdown simple : titres `##`, listes, **gras**, *italique*, liens, citations `>`. Le HTML n'est pas interprété.
 - Ne jamais inventer citations, dates ni références : renseigner les sources et la nature du contenu.
 
+## Transcription et traduction des vidéos
+
+Collection **Transcriptions** (une fiche par vidéo). L'interface affiche le lecteur à gauche et les segments à droite :
+horodatage début / fin, transcription dans la langue parlée, traduction française, traduction arabe (facultative), remarque.
+
+1. Créer ou choisir la fiche **Vidéos** (identifiant YouTube, ou fichier vidéo / audio joint s'il n'est pas sur YouTube).
+2. Créer une fiche **Transcriptions**, choisir la vidéo : le lecteur apparaît.
+3. Lancer la lecture ; à chaque phrase, `Ctrl+Entrée` (ou « Nouveau segment ici ») clôt le segment précédent et en ouvre un.
+   « Écouter » rejoue un segment seul ; vitesse 0,5 à 1,25.
+4. Enregistrer souvent. Passer en relecture, puis publication par un relecteur.
+
+Les notes internes et le fichier média ne sont jamais exposés au public. Le site n'affiche pas encore les transcriptions.
+
 ## Délai d'affichage
 
 Le site relit Directus toutes les 5 minutes. Le flow « Mise à jour du site » (déclenché à l'enregistrement) force la

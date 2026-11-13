@@ -90,6 +90,14 @@ const F = {
       note: opts.note ?? 'Renseigner le texte alternatif, l’auteur et la licence dans la fiche du fichier, et cocher « Visible sur le site ».',
     },
   }),
+  m2o: (field, fr, related, template, opts = {}) => ({
+    field, type: 'integer', relation: related,
+    meta: {
+      interface: 'select-dropdown-m2o', special: ['m2o'], display: 'related-values', display_options: { template },
+      options: { template }, width: opts.width ?? 'half', translations: label(fr), note: opts.note, required: opts.required ?? false,
+    },
+    schema: opts.unique ? { is_unique: true } : {},
+  }),
   /** Champ bilingue : `<field>_fr` et `<field>_ar`, côte à côte. */
   i18n: (kind, field, fr, opts = {}) => [
     { ...F[kind](`${field}_fr`, `${fr} (français)`, { ...opts, width: kind === 'markdown' ? 'full' : 'half' }) },
@@ -255,6 +263,27 @@ const collections = [
         { field: 'title', name: 'Titre', type: 'string', meta: { interface: 'input', width: 'half', required: true } },
       ], '{{start}} {{title}}'),
       F.bool('transcript_available', 'Transcription disponible'),
+      F.file('media_file', 'Fichier vidéo ou audio (hors YouTube)', {
+        image: false, width: 'full', note: 'Enregistrement à transcrire quand il n’est pas sur YouTube. Laisser « Visible sur le site » décoché.',
+      }),
+      ...F.audit(),
+    ],
+  },
+  {
+    collection: 'transcriptions', icon: 'subtitles', name: 'Transcriptions', status: true, display: '{{video.title}}',
+    note: 'Transcription et traduction d’une vidéo, segment par segment, en regardant la vidéo.',
+    fields: [
+      F.status(),
+      F.m2o('video', 'Vidéo', 'videos', '{{title}}', { unique: true, required: true, note: 'YouTube ou fichier joint à la fiche vidéo.' }),
+      F.select('spoken_language', 'Langue parlée', languages, { default: 'wo' }),
+      {
+        field: 'segments', type: 'json',
+        meta: {
+          interface: 'jamah-transcription', special: ['cast-json'], width: 'full', translations: label('Segments'),
+          note: 'Ctrl+Entrée : nouveau segment au temps de lecture. Ctrl+Espace : lecture / pause. Alt+← / Alt+→ : 5 secondes.',
+        },
+      },
+      F.textarea('notes', 'Notes de traduction (internes)'),
       ...F.audit(),
     ],
   },
@@ -334,7 +363,8 @@ const publicFileFields = [
   'id', 'type', 'title', 'filename_download', 'filesize', 'width', 'height',
   'alt_fr', 'alt_ar', 'credit_author', 'license', 'license_url', 'source_url', 'position',
 ]
-const publicFields = (c) => ['id', ...c.fields.map((f) => f.field).filter((f) => !f.startsWith('user_'))]
+const internalFields = new Set(['notes', 'media_file'])
+const publicFields = (c) => ['id', ...c.fields.map((f) => f.field).filter((f) => !f.startsWith('user_') && !internalFields.has(f))]
 
 async function ensurePolicy(name, description, icon) {
   const found = await api('GET', `/policies?filter[name][_eq]=${encodeURIComponent(name)}&limit=1`)

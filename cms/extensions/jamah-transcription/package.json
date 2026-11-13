@@ -1,0 +1,14 @@
+{
+  "name": "directus-extension-jamah-transcription",
+  "description": "Interface Directus : vidéo et segments de transcription / traduction côte à côte.",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "keywords": ["directus", "directus-extension", "directus-custom-interface"],
+  "directus:extension": {
+    "type": "interface",
+    "path": "index.js",
+    "source": "index.js",
+    "host": "^11.0.0"
+  }
+}
