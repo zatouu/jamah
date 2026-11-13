@@ -77,8 +77,10 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
 3. Import YouTube : flux RSS de la chaîne → vidéos en `draft` ; clé YouTube Data API plus tard pour l'historique complet.
 4. sufi-knowledge : réactiver le cluster Atlas, commiter ses 217 modifications, `tools/inventory-mongo`, migration ponctuelle
    des documents utiles en `draft` (droits vérifiés) ; porter citations, découpage, lecteur comparatif, apprentissage des poèmes.
-5. Déploiement : site sur la VM partagée (`SEARCH_API_URL` vers la VM dédiée) ; Directus + Postgres + Elasticsearch + search
-   sur la VM dédiée (4 Go conseillés avec Elasticsearch et le modèle sémantique).
+5. Déploiement (VM AWS unique 4 Go, décision du 13/11/2026) : `deploy/compose.prod.yml` (Caddy HTTPS, site, Directus,
+   Postgres ; recherche en profil `search`), `deploy/setup-vm.sh` (préparation unique), `.github/workflows/deploy.yml`
+   (CI verte → image GHCR → rsync + `docker compose up` par SSH). `apps/web/deploy/deploy.sh` reste l'ancienne voie (VM partagée).
+   Première mise en service : `docker compose -f deploy/compose.prod.yml --env-file .env --profile tools run --rm cms-setup`.
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
 7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses).
 

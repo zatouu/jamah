@@ -1,0 +1,16 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
+
+{$CMS_DOMAIN} {
+	encode zstd gzip
+	request_body {
+		max_size 1GB
+	}
+	reverse_proxy directus:8055
+}

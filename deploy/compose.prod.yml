@@ -1,0 +1,127 @@
+# Production sur une VM unique (4 Go) : Caddy (HTTPS) + site + Directus + PostgreSQL.
+# Recherche (Elasticsearch + search) : profil « search », 2e partie.
+# Sur la VM : cd /opt/jamah && docker compose -f deploy/compose.prod.yml --env-file .env up -d
+name: jamah
+
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    depends_on:
+      - web
+      - directus
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN}
+      CMS_DOMAIN: ${CMS_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../data/caddy/data:/data
+      - ../data/caddy/config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    mem_limit: 128m
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ../data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 384m
+
+  directus:
+    image: directus/directus:11.5.1
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SECRET: ${DIRECTUS_SECRET}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: https://${CMS_DOMAIN}
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      WEBSOCKETS_ENABLED: "false"
+      FILES_MAX_UPLOAD_SIZE: 1gb
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: "'self' https://www.youtube-nocookie.com"
+    volumes:
+      - ../data/directus/uploads:/directus/uploads
+      - ../cms/extensions:/directus/extensions:ro
+    mem_limit: 768m
+
+  web:
+    image: ${WEB_IMAGE:-ghcr.io/zatouu/jamah-web}:${WEB_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - directus
+    environment:
+      NEXT_PUBLIC_SITE_URL: https://${SITE_DOMAIN}
+      CMS_URL: http://directus:8055
+      SEARCH_API_URL: ${SEARCH_API_URL:-}
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
+    mem_limit: 512m
+
+  elasticsearch:
+    build: ../infra/elasticsearch
+    profiles: ["search"]
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: ${ES_JAVA_OPTS:--Xms512m -Xmx512m}
+    volumes:
+      - ../data/elasticsearch:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    mem_limit: 1g
+
+  search:
+    build: ../services/search
+    profiles: ["search"]
+    restart: unless-stopped
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      SEARCH_ES_URL: http://elasticsearch:9200
+      SEARCH_INDEX_PREFIX: ${SEARCH_INDEX_PREFIX:-jamah}
+      SEARCH_INDEX_TOKEN: ${SEARCH_INDEX_TOKEN:-}
+      SEARCH_EMBEDDING_MODEL: ${SEARCH_EMBEDDING_MODEL:-}
+    volumes:
+      - ../data/models:/home/app/models
+    mem_limit: 1g
+
+  cms-setup:
+    image: node:22-alpine
+    profiles: ["tools"]
+    depends_on:
+      - directus
+    working_dir: /w
+    volumes:
+      - ../cms/scripts:/w/cms/scripts:ro
+      - ../apps/web/src:/w/apps/web/src:ro
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      DIRECTUS_ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      SITE_REVALIDATE_URL: http://web:3000/api/revalidate
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
+    command: ["sh", "-c", "node cms/scripts/bootstrap.mjs && node cms/scripts/seed.mjs"]

@@ -1,0 +1,116 @@
+name: Deploy
+
+# Après une CI verte sur main (ou à la demande) : image du site -> GHCR, puis mise à jour de la VM par SSH.
+# Secrets (environnement « production ») : VM_HOST, VM_USER, VM_SSH_KEY, VM_KNOWN_HOSTS (sortie de ssh-keyscan).
+# Variables : SITE_URL (https://...), DOCKER_PLATFORM facultatif (linux/arm64 pour une instance Graviton).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    name: Image du site
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - id: meta
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          test -n "$SITE_URL" || { echo "::error::Variable SITE_URL manquante"; exit 1; }
+          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/jamah-web" >> "$GITHUB_OUTPUT"
+          echo "tag=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Compose de production valide
+        run: docker compose -f deploy/compose.prod.yml --env-file deploy/prod.env.example config --quiet
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: apps/web
+          platforms: ${{ vars.DOCKER_PLATFORM || 'linux/amd64' }}
+          build-args: NEXT_PUBLIC_SITE_URL=${{ vars.SITE_URL }}
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Mise à jour de la VM
+    needs: image
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      TARGET: ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Accès SSH
+        env:
+          SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VM_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host *\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' > ~/.ssh/config
+      - name: Copie de la configuration
+        run: |
+          rsync -az --delete --relative --exclude '__pycache__' \
+            deploy cms apps/web/src services/search infra "$TARGET:/opt/jamah/"
+      - name: Connexion au registre
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GHCR_TOKEN" | ssh "$TARGET" "docker login ghcr.io -u '${{ github.actor }}' --password-stdin"
+      - name: Redémarrage des services
+        run: |
+          ssh "$TARGET" bash -s -- "${{ needs.image.outputs.image }}" "${{ needs.image.outputs.tag }}" <<'EOF'
+          set -euo pipefail
+          cd /opt/jamah
+          compose() { docker compose -f deploy/compose.prod.yml --env-file .env "$@"; }
+          sed -i -e "s|^WEB_IMAGE=.*|WEB_IMAGE=$1|" -e "s|^WEB_TAG=.*|WEB_TAG=$2|" .env
+          trap 'docker logout ghcr.io >/dev/null' EXIT
+          compose pull web
+          compose up -d
+          # Directus ne recharge ses extensions qu'au démarrage
+          sum=$(find cms/extensions -type f -exec sha256sum {} + | sort | sha256sum)
+          if [ "$sum" != "$(cat data/.extensions.sha 2>/dev/null)" ]; then
+            compose restart directus
+            echo "$sum" > data/.extensions.sha
+          fi
+          for i in $(seq 1 20); do
+            compose exec -T web wget -qO /dev/null http://127.0.0.1:3000/fr && break
+            [ "$i" = 20 ] && { compose logs --tail 50 web; exit 1; }
+            sleep 3
+          done
+          # Image construite sans accès au CMS : relire Directus tout de suite
+          compose exec -T web sh -c 'wget -qO /dev/null --header="Authorization: Bearer $REVALIDATE_TOKEN" --post-data="" http://127.0.0.1:3000/api/revalidate' \
+            || echo "Régénération non effectuée (jeton absent ?) : le site relira Directus sous 5 minutes."
+          docker image prune -f >/dev/null
+          EOF
