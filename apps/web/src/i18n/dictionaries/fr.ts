@@ -352,6 +352,20 @@ export const fr = {
     more: 'Voir la rubrique',
   },
   notFound: { title: 'Page introuvable', body: 'Cette adresse ne correspond à aucune page du site.' },
+  pageContent: {
+    sources: 'Sources',
+    updated: 'Mis à jour le',
+    documents: 'Documents',
+    download: 'Télécharger',
+    onRequest: 'Fichier disponible sur demande auprès de la Jamah.',
+  },
+  contact: {
+    title: 'Nous contacter',
+    email: 'Courriel',
+    phone: 'Téléphone',
+    address: 'Adresse',
+    follow: 'Nous suivre',
+  },
   footer: {
     tagline: 'Plateforme éditoriale et documentaire de la Jamah Sayroul Abad.',
     editorial: 'Chaque texte est publié avec ses références, après vérification éditoriale.',

@@ -50,13 +50,24 @@ Fait :
 3. `cp .env.example .env && docker compose up -d postgres directus elasticsearch search`, puis
    `curl -X POST -H "Authorization: Bearer $SEARCH_INDEX_TOKEN" localhost:8000/v1/admin/setup` et un essai d'indexation.
 
+## Contenu géré par Directus (fait, non commité au départ, non vérifié par npm)
+
+- Modèle : `cms/scripts/bootstrap.mjs` (idempotent) ; import initial : `cms/scripts/seed.mjs` ; `docker compose run --rm cms-setup`.
+  Guide éditeur : `cms/README.md`.
+- Champs localisés `<champ>_fr` / `<champ>_ar`. Champ CMS vide = valeur par défaut (dictionnaires `src/i18n`, images locales).
+- Lecture : `src/lib/cms.ts` (rôle Public, `revalidate: 300`, tag `cms`) ; `src/content/site-content.ts` (accueil, réglages,
+  images, couvertures, pages publiées) ; `src/content/cms-pages.ts` (rubriques, documents, vidéos).
+  Erreur CMS : au build avertissement + repli ; à l'exécution exception (l'ISR garde la dernière page valide).
+- Fichiers servis par `/cms-assets/<uuid>` (uniquement `is_public`). Régénération : `POST /api/revalidate` (Bearer `REVALIDATE_TOKEN`).
+- Une rubrique est « publiée » (indexable, sitemap) seulement si son corps existe dans la langue.
+- Vérifié sur ce poste avec le Node embarqué de VS Code (harnais hors dépôt) : tests vitest du dossier `src` et scripts CMS
+  contre un faux Directus. **Non vérifié** : `npm run lint/typecheck/build`, Directus 11 réel (nom de la politique Public,
+  flow `request` vers un hôte interne), rendu visuel.
+
 Suite (dans l'ordre) :
-1. **Directus** (local, VM dédiée prévue dans la semaine) : collections `pages` (chemin de rubrique, statut, nature, sources,
-   corps Markdown FR/AR), `media` (auteur, licence, consentement), `documents` (écrits de Cheikh Ousmane Mbow : fichier, langue,
-   type, droits), `videos` (champs YouTube + éditoriaux) ; rôles rédacteur / relecteur / admin ; rôle Public en lecture
-   filtrée `status = published` ; script d'amorçage idempotent (`cms/scripts/`) ; flow Directus → `POST /v1/documents`.
-2. Site : lire les pages publiées depuis Directus (`CMS_URL`, ISR) ; rendu Markdown **sans** HTML brut (pas de nouvelle
-   dépendance sans lockfile) ; page indexable + sitemap dès qu'un contenu est publié ; images Directus (`remotePatterns`, CSP `img-src`).
+1. Valider sur une machine avec Node/Docker : `npm ci && npm run lint && npm run typecheck && npm test && npm run build`,
+   puis `docker compose up -d` + `cms-setup`, publication d'une page test, vérification du flow.
+2. Indexation recherche depuis Directus (flow → `POST /v1/documents`).
 3. Import YouTube : flux RSS de la chaîne → vidéos en `draft` ; clé YouTube Data API plus tard pour l'historique complet.
 4. sufi-knowledge : réactiver le cluster Atlas, commiter ses 217 modifications, `tools/inventory-mongo`, migration ponctuelle
    des documents utiles en `draft` (droits vérifiés) ; porter citations, découpage, lecteur comparatif, apprentissage des poèmes.

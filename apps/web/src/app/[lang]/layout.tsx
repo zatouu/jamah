@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
 import { Amiri, Inter, Noto_Naskh_Arabic, Source_Serif_4 } from 'next/font/google'
 import { getDirection, isLocale, locales } from '@/i18n/config'
-import { getDictionary } from '@/i18n/get-dictionary'
+import { getSiteContent } from '@/content/site-content'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { localizedAlternates, siteUrl } from '@/lib/site'
@@ -27,7 +27,7 @@ export const viewport: Viewport = { themeColor: '#0f3d2e' }
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { lang } = await params
   if (!isLocale(lang)) return {}
-  const { meta } = getDictionary(lang)
+  const { meta } = (await getSiteContent(lang)).dict
   return {
     metadataBase: new URL(siteUrl),
     title: { default: meta.title, template: `%s — ${meta.siteName}` },
@@ -46,7 +46,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function LocaleLayout({ children, params }: Params & { children: React.ReactNode }) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
-  const dict = getDictionary(lang)
+  const content = await getSiteContent(lang)
+  const { dict } = content
 
   return (
     <html
@@ -63,7 +64,7 @@ export default async function LocaleLayout({ children, params }: Params & { chil
         </a>
         <SiteHeader locale={lang} dict={dict} />
         <main id="main">{children}</main>
-        <SiteFooter locale={lang} dict={dict} />
+        <SiteFooter locale={lang} dict={dict} contact={content.contact} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(siteJsonLd(lang, dict)) }} />
       </body>
     </html>
