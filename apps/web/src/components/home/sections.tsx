@@ -2,17 +2,16 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
-import type { MediaKey } from '@/content/media'
+import type { GalleryTile, SiteContent } from '@/content/site-content'
+import type { VideoEntry } from '@/content/videos'
 import { ArrowIcon } from '@/components/icons'
 import { Photo } from '@/components/photo'
 import { SearchForm } from '@/components/search-form'
 import { VideoCard } from '@/components/rubric/video-catalog'
-import { publicVideos } from '@/content/videos'
-import { nextAnnualDate } from '@/lib/calendar'
 import { siteSections } from '@/lib/navigation'
 import { localePath } from '@/lib/paths'
 
-type SectionProps = { locale: Locale; dict: Dictionary }
+type SectionProps = { locale: Locale; dict: Dictionary; content: SiteContent }
 
 /* ---------- Gabarit commun : espacement, fond, en-tête ---------- */
 
@@ -69,12 +68,12 @@ const cardLink = 'group block h-full rounded-card bg-paper shadow-soft ring-1 ri
 
 /* ---------- 1. Accueil ---------- */
 
-export function Hero({ locale, dict }: SectionProps) {
+export function Hero({ locale, dict, content }: SectionProps) {
   const t = dict.homePage
   return (
     <section id="accueil" className="relative">
       <div className="relative isolate overflow-hidden">
-        <Photo id="khaima" locale={locale} priority className="absolute inset-0 -z-10" />
+        <Photo image={content.images.hero} priority className="absolute inset-0 -z-10" />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-forest-900/90 via-forest-900/50 to-forest-900/15" />
         <div className="container-page flex min-h-[28rem] flex-col justify-end pb-24 pt-16 md:min-h-[34rem] md:pb-28">
           <p className="font-display text-lg italic text-ivory/85 rtl:not-italic">{t.greeting}</p>
@@ -108,15 +107,17 @@ export function QuoteBand({ dict }: SectionProps) {
   return (
     <Section id="parole">
       <blockquote className="mx-auto max-w-3xl border-s-2 border-ochre ps-6 md:ps-8">
-        <p lang="fr" dir="ltr" className="font-display text-xl leading-snug text-forest-900 md:text-[1.75rem] md:leading-[1.4]">
+        <p dir="auto" className="font-display text-xl leading-snug text-forest-900 md:text-[1.75rem] md:leading-[1.4]">
           {q.text}
         </p>
         <footer className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
           <cite className="font-display text-base not-italic text-forest-800">{q.author}</cite>
           <span className="text-muted">{q.context}</span>
-          <a href={q.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted underline decoration-line underline-offset-4 hover:text-forest-700">
-            {q.sourceLabel}
-          </a>
+          {q.sourceUrl && (
+            <a href={q.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted underline decoration-line underline-offset-4 hover:text-forest-700">
+              {q.sourceLabel}
+            </a>
+          )}
           {q.note && <span className="w-full text-xs text-muted">{q.note}</span>}
         </footer>
       </blockquote>
@@ -126,41 +127,45 @@ export function QuoteBand({ dict }: SectionProps) {
 
 /* ---------- 3. Du Prophète ﷺ à nos maîtres ---------- */
 
-const masterImages: MediaKey[] = ['hilye', 'ainMadhi', 'bayeNiasse', 'dunes']
-
-export function Masters({ locale, dict }: SectionProps) {
+export function Masters({ locale, dict, content }: SectionProps) {
   const { masters } = dict.homePage
   return (
     <Section id="maitres" tone="paper" eyebrow={masters.eyebrow} title={masters.title} lead={masters.lead}>
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {masters.items.map((item, i) => (
-          <li key={item.href} className="relative">
-            {i > 0 && (
-              <span aria-hidden className="absolute -start-4 top-24 z-10 hidden size-4 -translate-x-1/2 rotate-45 border border-ochre bg-paper lg:block rtl:translate-x-1/2" />
-            )}
-            <Link href={localePath(locale, item.href)} className={`${cardLink} overflow-hidden`}>
-              <Photo
-                id={masterImages[i]}
-                locale={locale}
-                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                className="aspect-[4/3] bg-sand"
-                imgClassName={`transition-transform duration-700 group-hover:scale-105 ${masterImages[i] === 'bayeNiasse' ? 'object-[50%_20%]' : ''}`}
-              />
-              <div className="p-5">
-                <p lang="ar" dir="rtl" className="font-quran text-2xl leading-relaxed text-forest-800">{item.nameAr}</p>
-                {locale === 'fr' && <h3 className="font-display text-lg text-forest-900">{item.name}</h3>}
-                <p className="mt-2 text-sm leading-relaxed text-muted">{item.role}</p>
-                <div className="mt-4 flex items-center justify-between text-xs">
-                  <span className="text-ochre">{item.meta}</span>
-                  <span className="inline-flex items-center gap-1 font-medium text-forest-700">
-                    {masters.more}
-                    <ArrowIcon className="size-3.5" />
-                  </span>
+        {masters.items.map((item, i) => {
+          const image = content.images.masters[i]
+          return (
+            <li key={`${item.href}-${i}`} className="relative">
+              {i > 0 && (
+                <span aria-hidden className="absolute -start-4 top-24 z-10 hidden size-4 -translate-x-1/2 rotate-45 border border-ochre bg-paper lg:block rtl:translate-x-1/2" />
+              )}
+              <Link href={localePath(locale, item.href)} className={`${cardLink} overflow-hidden`}>
+                {image ? (
+                  <Photo
+                    image={image}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="aspect-[4/3] bg-sand"
+                    imgClassName="transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <div aria-hidden className="grid aspect-[4/3] place-items-center bg-forest-900 font-quran text-5xl text-ivory/80">{item.nameAr.slice(0, 1)}</div>
+                )}
+                <div className="p-5">
+                  <p lang="ar" dir="rtl" className="font-quran text-2xl leading-relaxed text-forest-800">{item.nameAr}</p>
+                  {locale === 'fr' && <h3 className="font-display text-lg text-forest-900">{item.name}</h3>}
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{item.role}</p>
+                  <div className="mt-4 flex items-center justify-between text-xs">
+                    <span className="text-ochre">{item.meta}</span>
+                    <span className="inline-flex items-center gap-1 font-medium text-forest-700">
+                      {masters.more}
+                      <ArrowIcon className="size-3.5" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          )
+        })}
       </ol>
     </Section>
   )
@@ -175,7 +180,7 @@ export function Progression({ locale, dict }: SectionProps) {
     <Section id="parcours" eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
         {t.items.map((item, i) => (
-          <li key={item.href} className="relative">
+          <li key={`${item.href}-${i}`} className="relative">
             <Link href={localePath(locale, item.href)} className={`${cardLink} flex flex-col p-5 lg:min-h-[11rem]`}>
               <span className="flex items-center gap-2">
                 <span className="grid size-7 place-items-center rounded-full bg-forest-800 text-xs tabular-nums text-ivory">{fmt.format(i + 1)}</span>
@@ -193,14 +198,14 @@ export function Progression({ locale, dict }: SectionProps) {
 
 /* ---------- 5. Cheikh Ould Khayri : pilier de la transmission ---------- */
 
-export function KhayriSpotlight({ locale, dict }: SectionProps) {
+export function KhayriSpotlight({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.khayri
   const section = dict.sections['cheikh-ould-khayri']
   const labels = section.children as Record<string, string>
   return (
     <Section id="cheikh-ould-khayri" tone="paper">
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <Photo id="dunes" locale={locale} sizes="(min-width: 1024px) 45vw, 100vw" className="aspect-[16/10] rounded-card" />
+        <Photo image={content.images.khayri} sizes="(min-width: 1024px) 45vw, 100vw" className="aspect-[16/10] rounded-card" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ochre rtl:tracking-normal">{t.eyebrow}</p>
           <h2 className="mt-2 font-display text-3xl text-forest-900 md:text-[2.5rem] rtl:leading-[1.4]">{t.title}</h2>
@@ -228,10 +233,10 @@ export function KhayriSpotlight({ locale, dict }: SectionProps) {
 
 /* ---------- 6. Cheikh Ousmane Mbow : notre guide + vidéos ---------- */
 
-export function MbowSpotlight({ locale, dict }: SectionProps) {
+export function MbowSpotlight({ locale, dict, videos: allVideos }: SectionProps & { videos: VideoEntry[] }) {
   const t = dict.homePage.mbow
   const labels = dict.sections['cheikh-ousmane-mbow'].children as Record<string, string>
-  const videos = publicVideos().slice(0, 3)
+  const videos = allVideos.slice(0, 3)
   return (
     <Section id="cheikh-ousmane-mbow" tone="dark">
       <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
@@ -288,24 +293,29 @@ export function MbowSpotlight({ locale, dict }: SectionProps) {
 
 /* ---------- 7. Vie de la communauté ---------- */
 
-const lifeImages: MediaKey[] = ['tasbih', 'medinaBaye', 'enseignement', 'dunes']
-
-export function CommunityLife({ locale, dict }: SectionProps) {
+export function CommunityLife({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.life
   return (
     <Section id="vie" eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {t.items.map((item, i) => (
-          <li key={item.title}>
-            <Link href={localePath(locale, item.href)} className={`${cardLink} overflow-hidden`}>
-              <Photo id={lifeImages[i]} locale={locale} credit={false} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="aspect-[16/10]" imgClassName="transition-transform duration-700 group-hover:scale-105" />
-              <div className="p-5">
-                <h3 className="font-display text-lg text-forest-900 group-hover:text-forest-700">{item.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</p>
-              </div>
-            </Link>
-          </li>
-        ))}
+        {t.items.map((item, i) => {
+          const image = content.images.life[i]
+          return (
+            <li key={`${item.title}-${i}`}>
+              <Link href={localePath(locale, item.href)} className={`${cardLink} overflow-hidden`}>
+                {image ? (
+                  <Photo image={image} credit={false} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="aspect-[16/10]" imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                  <div aria-hidden className="aspect-[16/10] bg-sand" />
+                )}
+                <div className="p-5">
+                  <h3 className="font-display text-lg text-forest-900 group-hover:text-forest-700">{item.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</p>
+                </div>
+              </Link>
+            </li>
+          )
+        })}
       </ul>
     </Section>
   )
@@ -313,32 +323,36 @@ export function CommunityLife({ locale, dict }: SectionProps) {
 
 /* ---------- 8. Rendez-vous ---------- */
 
-export function Gatherings({ locale, dict }: SectionProps) {
+export function Gatherings({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.gatherings
-  const { date, daysLeft } = nextAnnualDate(4, 20)
+  const { countdown } = content
   const fmtDate = new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'fr', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
   const fmtNum = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr')
-  const plural = new Intl.PluralRules(locale === 'ar' ? 'ar' : 'fr').select(daysLeft)
+  const plural = countdown ? new Intl.PluralRules(locale === 'ar' ? 'ar' : 'fr').select(countdown.daysLeft) : 'other'
   const daysText = t.daysLeft[plural === 'zero' ? 'other' : plural]
   return (
     <Section id="rendez-vous" tone="dark" eyebrow={t.eyebrow} title={t.title}>
-      <Photo id="dunes" locale={locale} credit={false} className="absolute inset-0 -z-10 opacity-15" />
+      <Photo image={content.images.gatherings} credit={false} className="absolute inset-0 -z-10 opacity-15" />
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-card border border-ivory/15 bg-ivory/[0.07] p-6 backdrop-blur-sm">
-          <p className="text-sm text-ivory/70">{t.countdownLabel}</p>
-          <p className="mt-2 font-display text-5xl tabular-nums">{daysLeft === 0 ? t.today : daysText.replace('{n}', fmtNum.format(daysLeft))}</p>
-          <p className="mt-2 text-sm text-ivory/70">{fmtDate.format(date)}</p>
-        </div>
-        {t.items.map((item) => (
-          <article key={item.title} className="flex flex-col rounded-card border border-ivory/10 bg-forest-800/70 p-6">
+        {countdown && (
+          <div className="rounded-card border border-ivory/15 bg-ivory/[0.07] p-6 backdrop-blur-sm">
+            <p className="text-sm text-ivory/70">{countdown.label}</p>
+            <p className="mt-2 font-display text-5xl tabular-nums">{countdown.daysLeft === 0 ? t.today : daysText.replace('{n}', fmtNum.format(countdown.daysLeft))}</p>
+            <p className="mt-2 text-sm text-ivory/70">{fmtDate.format(countdown.date)}</p>
+          </div>
+        )}
+        {t.items.map((item, i) => (
+          <article key={`${item.title}-${i}`} className="flex flex-col rounded-card border border-ivory/10 bg-forest-800/70 p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="font-display text-xl">{item.title}</h3>
               <span className="text-xs text-forest-100/80">{item.place}</span>
             </div>
             <p className="mt-3 flex-1 text-sm leading-relaxed text-ivory/80">{item.body}</p>
-            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-xs text-ivory/70 underline underline-offset-4 hover:text-ivory/80">
-              {item.sourceLabel}
-            </a>
+            {item.sourceUrl && (
+              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-xs text-ivory/70 underline underline-offset-4 hover:text-ivory/80">
+                {item.sourceLabel || item.sourceUrl}
+              </a>
+            )}
           </article>
         ))}
       </div>
@@ -349,7 +363,7 @@ export function Gatherings({ locale, dict }: SectionProps) {
 
 /* ---------- 9. Bibliothèque ---------- */
 
-export function LibraryPrinciple({ locale, dict }: SectionProps) {
+export function LibraryPrinciple({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.library
   const rows = [
     { key: 'original', label: t.layers.original, content: <p className="text-arabic !text-2xl !leading-[2] text-forest-900" lang="ar">{t.sample.original}</p> },
@@ -360,7 +374,7 @@ export function LibraryPrinciple({ locale, dict }: SectionProps) {
   return (
     <Section id="bibliotheque" eyebrow={t.eyebrow} title={t.title} lead={t.lead} action={{ href: localePath(locale, 'bibliotheque'), label: t.cta }}>
       <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
-        <Photo id="fatiha" locale={locale} sizes="(min-width: 1024px) 18rem, 100vw" className="aspect-[16/10] rounded-card lg:aspect-auto" imgClassName="object-top" />
+        <Photo image={content.images.library} sizes="(min-width: 1024px) 18rem, 100vw" className="aspect-[16/10] rounded-card lg:aspect-auto" />
         <figure className="rounded-card border border-line bg-paper">
           <dl className="divide-y divide-line">
             {rows.map((row) => (
@@ -381,21 +395,19 @@ export function LibraryPrinciple({ locale, dict }: SectionProps) {
 
 /* ---------- 10. En images ---------- */
 
-const galleryImages: { id: MediaKey; className: string }[] = [
-  { id: 'domeVert', className: 'col-span-2 row-span-2' },
-  { id: 'manuscrit', className: 'col-span-2 md:col-span-1' },
-  { id: 'bayeNiasse', className: '' },
-  { id: 'khaima', className: '' },
-  { id: 'medinaBaye', className: 'md:col-span-1' },
-]
+const tileClass: Record<GalleryTile['size'], string> = {
+  large: 'col-span-2 row-span-2',
+  wide: 'col-span-2',
+  normal: '',
+}
 
-export function Gallery({ locale, dict }: SectionProps) {
+export function Gallery({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.gallery
   return (
     <Section id="images" tone="sand" eyebrow={t.eyebrow} title={t.title} lead={t.lead} action={{ href: localePath(locale, 'jamah/contact'), label: t.cta }}>
-      <div className="grid auto-rows-[9rem] grid-cols-2 gap-3 md:auto-rows-[11rem] md:grid-cols-4">
-        {galleryImages.map(({ id, className }) => (
-          <Photo key={id} id={id} locale={locale} sizes="(min-width: 768px) 25vw, 50vw" className={`rounded-card ${className}`} imgClassName={id === 'bayeNiasse' ? 'object-[50%_20%]' : ''} />
+      <div className="grid grid-flow-row-dense auto-rows-[9rem] grid-cols-2 gap-3 md:auto-rows-[11rem] md:grid-cols-4">
+        {content.gallery.map(({ image, size }, i) => (
+          <Photo key={i} image={image} sizes="(min-width: 768px) 25vw, 50vw" className={`rounded-card ${tileClass[size]}`} />
         ))}
       </div>
       <Link href={localePath(locale, 'credits')} className="mt-4 inline-block text-xs text-muted underline underline-offset-4 hover:text-forest-700">

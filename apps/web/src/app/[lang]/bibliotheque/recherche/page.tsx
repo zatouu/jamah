@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { isLocale } from '@/i18n/config'
-import { getDictionary } from '@/i18n/get-dictionary'
+import { getSiteContent } from '@/content/site-content'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { SearchForm } from '@/components/search-form'
 import { SourceNatureBadge } from '@/components/rubric/rubric-parts'
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
   if (!isLocale(lang)) return {}
   return {
-    title: getDictionary(lang).searchPage.title,
+    title: (await getSiteContent(lang)).dict.searchPage.title,
     robots: { index: false, follow: true },
     alternates: localizedAlternates(lang, 'bibliotheque/recherche'),
   }
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SearchPage({ params, searchParams }: Props) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
-  const dict = getDictionary(lang)
+  const { dict } = await getSiteContent(lang)
   const raw = (await searchParams).q
   const query = (Array.isArray(raw) ? raw[0] : raw)?.trim().slice(0, 200) ?? ''
   const result = await searchLibrary(query)

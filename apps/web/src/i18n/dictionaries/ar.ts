@@ -356,6 +356,20 @@ export const ar: Dictionary = {
     more: 'عرض القسم',
   },
   notFound: { title: 'الصفحة غير موجودة', body: 'هذا العنوان لا يطابق أي صفحة في الموقع.' },
+  pageContent: {
+    sources: 'المصادر',
+    updated: 'آخر تحديث',
+    documents: 'الوثائق',
+    download: 'تحميل',
+    onRequest: 'الملف متاح عند الطلب من الجماعة.',
+  },
+  contact: {
+    title: 'تواصل معنا',
+    email: 'البريد الإلكتروني',
+    phone: 'الهاتف',
+    address: 'العنوان',
+    follow: 'تابعونا',
+  },
   footer: {
     tagline: 'منصة تحريرية ووثائقية لجماعة سير العبيد.',
     editorial: 'يُنشر كل نص بمراجعه بعد المراجعة التحريرية.',

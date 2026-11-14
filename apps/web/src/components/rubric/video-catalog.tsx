@@ -31,8 +31,8 @@ export function VideoCard({ video, dict }: { video: VideoEntry; dict: Dictionary
 }
 
 /** Catalogue : grille des vidéos publiées, ou état vide explicite. */
-export function VideoCatalog({ dict }: { dict: Dictionary }) {
-  const list = publicVideos()
+export function VideoCatalog({ dict, videos }: { dict: Dictionary; videos: VideoEntry[] }) {
+  const list = publicVideos(videos)
   if (!list.length) {
     return (
       <section className="rounded-card border border-line bg-paper p-6">

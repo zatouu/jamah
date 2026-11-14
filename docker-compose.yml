@@ -38,6 +38,8 @@ services:
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       WEBSOCKETS_ENABLED: "false"
+      # Lecteur YouTube de l'interface « Transcription synchronisée »
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: "'self' https://www.youtube-nocookie.com"
     volumes:
       - ./data/directus/uploads:/directus/uploads
       - ./cms/extensions:/directus/extensions
@@ -87,5 +89,25 @@ services:
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
       SEARCH_API_URL: http://search:8000
       CMS_URL: http://directus:8055
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
     ports:
       - "3000:3000"
+
+  # Initialisation du CMS (modèle, rôles, droits publics, flow, import des contenus actuels).
+  # Ponctuel et idempotent : docker compose run --rm cms-setup
+  cms-setup:
+    image: node:22-alpine
+    profiles: ["tools"]
+    depends_on:
+      - directus
+    working_dir: /w
+    volumes:
+      - ./cms/scripts:/w/cms/scripts:ro
+      - ./apps/web/src:/w/apps/web/src:ro
+    environment:
+      DIRECTUS_URL: http://directus:8055
+      DIRECTUS_ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      DIRECTUS_ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      SITE_REVALIDATE_URL: http://web:3000/api/revalidate
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
+    command: ["sh", "-c", "node cms/scripts/bootstrap.mjs && node cms/scripts/seed.mjs"]

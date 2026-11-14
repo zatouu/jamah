@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
+import type { Contact } from '@/content/site-content'
+import { ContactDetails } from '@/components/contact-details'
 import { siteSections, type SectionSlug } from '@/lib/navigation'
 import { localePath } from '@/lib/paths'
 
-export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function SiteFooter({ locale, dict, contact }: { locale: Locale; dict: Dictionary; contact: Contact }) {
   const sections = Object.keys(siteSections) as SectionSlug[]
   return (
     <footer className="border-t border-line bg-sand/60">
@@ -13,6 +15,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
           <p className="font-display text-xl text-forest-900">{dict.meta.siteName}</p>
           <p className="text-sm leading-relaxed text-muted">{dict.footer.tagline}</p>
           <p className="text-sm leading-relaxed text-muted">{dict.footer.editorial}</p>
+          <ContactDetails contact={contact} dict={dict} className="pt-2" />
         </div>
         <nav aria-label={dict.footer.explore}>
           <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm sm:grid-cols-3">

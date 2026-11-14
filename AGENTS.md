@@ -50,19 +50,37 @@ Fait :
 3. `cp .env.example .env && docker compose up -d postgres directus elasticsearch search`, puis
    `curl -X POST -H "Authorization: Bearer $SEARCH_INDEX_TOKEN" localhost:8000/v1/admin/setup` et un essai d'indexation.
 
-Suite (dans l'ordre) :
-1. **Directus** (local, VM dédiée prévue dans la semaine) : collections `pages` (chemin de rubrique, statut, nature, sources,
-   corps Markdown FR/AR), `media` (auteur, licence, consentement), `documents` (écrits de Cheikh Ousmane Mbow : fichier, langue,
-   type, droits), `videos` (champs YouTube + éditoriaux) ; rôles rédacteur / relecteur / admin ; rôle Public en lecture
-   filtrée `status = published` ; script d'amorçage idempotent (`cms/scripts/`) ; flow Directus → `POST /v1/documents`.
-2. Site : lire les pages publiées depuis Directus (`CMS_URL`, ISR) ; rendu Markdown **sans** HTML brut (pas de nouvelle
-   dépendance sans lockfile) ; page indexable + sitemap dès qu'un contenu est publié ; images Directus (`remotePatterns`, CSP `img-src`).
+## Contenu géré par Directus (fait, non commité au départ, non vérifié par npm)
+
+- Modèle : `cms/scripts/bootstrap.mjs` (idempotent) ; import initial : `cms/scripts/seed.mjs` ; `docker compose run --rm cms-setup`.
+  Guide éditeur : `cms/README.md`.
+- Champs localisés `<champ>_fr` / `<champ>_ar`. Champ CMS vide = valeur par défaut (dictionnaires `src/i18n`, images locales).
+- Lecture : `src/lib/cms.ts` (rôle Public, `revalidate: 300`, tag `cms`) ; `src/content/site-content.ts` (accueil, réglages,
+  images, couvertures, pages publiées) ; `src/content/cms-pages.ts` (rubriques, documents, vidéos).
+  Erreur CMS : au build avertissement + repli ; à l'exécution exception (l'ISR garde la dernière page valide).
+- Fichiers servis par `/cms-assets/<uuid>` (uniquement `is_public`). Régénération : `POST /api/revalidate` (Bearer `REVALIDATE_TOKEN`).
+- Une rubrique est « publiée » (indexable, sitemap) seulement si son corps existe dans la langue.
+- Vérifié sur ce poste avec le Node embarqué de VS Code (harnais hors dépôt) : tests vitest du dossier `src` et scripts CMS
+  contre un faux Directus. **Non vérifié** : `npm run lint/typecheck/build`, Directus 11 réel (nom de la politique Public,
+  flow `request` vers un hôte interne), rendu visuel.
+
+- Transcription : collection `transcriptions` (une par vidéo, `segments` JSON `{start, end, original, fr, ar, note}` en
+  secondes) éditée par l'extension sans build `cms/extensions/jamah-transcription` (lecteur YouTube via postMessage, ou
+  fichier `videos.media_file`). CSP Directus : `frame-src` youtube-nocookie dans le compose. Pas encore affichée sur le site.
+- Transfert entre postes : `git bundle` (pas de push depuis ce poste).
+
+Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche est reportée en 2e partie :
+1. Valider sur une machine avec Node/Docker : `npm ci && npm run lint && npm run typecheck && npm test && npm run build`,
+   puis `docker compose up -d` + `cms-setup`, publication d'une page test, vérification du flow, essai de l'interface
+   de transcription (YouTube et fichier).
+2. Extraits commentés : collection `excerpts` (vidéo, début/fin, commentaire FR/AR) et affichage des transcriptions publiées.
 3. Import YouTube : flux RSS de la chaîne → vidéos en `draft` ; clé YouTube Data API plus tard pour l'historique complet.
 4. sufi-knowledge : réactiver le cluster Atlas, commiter ses 217 modifications, `tools/inventory-mongo`, migration ponctuelle
    des documents utiles en `draft` (droits vérifiés) ; porter citations, découpage, lecteur comparatif, apprentissage des poèmes.
 5. Déploiement : site sur la VM partagée (`SEARCH_API_URL` vers la VM dédiée) ; Directus + Postgres + Elasticsearch + search
    sur la VM dédiée (4 Go conseillés avec Elasticsearch et le modèle sémantique).
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
+7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses).
 
 À obtenir de la Jamah : graphie arabe du nom, présentation de la Jamah, contact, présentation validée de Cheikh Ousmane Mbow
 et portrait (avec accord), réponses au dossier biographique §5, photos (auteur, date, accord), premiers écrits de Cheikh

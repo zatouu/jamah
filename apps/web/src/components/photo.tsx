@@ -1,10 +1,8 @@
 import Image from 'next/image'
-import type { Locale } from '@/i18n/config'
-import { media, type MediaKey } from '@/content/media'
+import type { SiteImage } from '@/content/media'
 
 type PhotoProps = {
-  id: MediaKey
-  locale: Locale
+  image: SiteImage
   className?: string
   imgClassName?: string
   sizes?: string
@@ -13,24 +11,29 @@ type PhotoProps = {
   credit?: boolean
 }
 
-export function Photo({ id, locale, className = '', imgClassName = '', sizes = '100vw', priority, credit = true }: PhotoProps) {
-  const entry = media[id]
+export function Photo({ image, className = '', imgClassName = '', sizes = '100vw', priority, credit = true }: PhotoProps) {
   const position = /(^|\s)!?absolute(\s|$)/.test(className) ? '' : 'relative'
+  // Les fichiers du CMS n'ont pas de dimensions connues au build : ils remplissent leur cadre.
+  const sizing = typeof image.src === 'string' ? { fill: true } : { placeholder: 'blur' as const }
+  const caption = [image.author && `© ${image.author}`, image.license].filter(Boolean).join(' · ')
   return (
     <figure className={`${position} overflow-hidden ${className.replace('!absolute', 'absolute')}`}>
       <Image
-        src={entry.src}
-        alt={entry.alt[locale]}
+        src={image.src}
+        alt={image.alt}
         sizes={sizes}
         priority={priority}
-        placeholder="blur"
+        {...sizing}
+        style={image.position ? { objectPosition: image.position } : undefined}
         className={`h-full w-full object-cover ${imgClassName}`}
       />
-      {credit && (
+      {credit && caption && (
         <figcaption className="absolute bottom-2 end-2 max-w-[80%] truncate rounded-full bg-black/45 px-2.5 py-0.5 text-[0.65rem] text-white/85 backdrop-blur-sm" dir="ltr">
-          <a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-            © {entry.author} · {entry.license}
-          </a>
+          {image.sourceUrl ? (
+            <a href={image.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{caption}</a>
+          ) : (
+            caption
+          )}
         </figcaption>
       )}
     </figure>
