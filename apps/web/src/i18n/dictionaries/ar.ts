@@ -14,10 +14,9 @@ export const ar: Dictionary = {
     mainNav: 'القائمة الرئيسية',
     menu: 'القائمة',
     breadcrumb: 'مسار التصفح',
-    switchLanguage: 'Lire en français',
+    switchLanguage: 'اختيار اللغة',
   },
   brand: { prefix: 'جماعة', name: 'سير العبيد', mark: 'ج' },
-  langLabel: 'Français',
   home: 'الرئيسية',
   sections: {
     'comprendre-islam': {

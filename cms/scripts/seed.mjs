@@ -9,12 +9,12 @@ import { connect, siteModule, sitePath, sitePaths } from './lib.mjs'
 const api = await connect()
 const { fr } = await siteModule('i18n/dictionaries/fr.ts')
 const { ar } = await siteModule('i18n/dictionaries/ar.ts')
+const { en } = await siteModule('i18n/dictionaries/en.ts')
 const { mediaCatalog } = await siteModule('content/media-catalog.ts')
-const dict = { fr, ar }
 const log = (msg) => console.log(msg)
 
-/** Valeur bilingue : { champ_fr, champ_ar } à partir d'un accès au dictionnaire. */
-const both = (field, get) => ({ [`${field}_fr`]: get(fr), [`${field}_ar`]: get(ar) })
+/** Valeur multilingue : { champ_fr, champ_ar, champ_en } à partir d'un accès au dictionnaire. */
+const both = (field, get) => ({ [`${field}_fr`]: get(fr), [`${field}_ar`]: get(ar), [`${field}_en`]: get(en) })
 const empty = (v) => v === null || v === undefined || v === ''
 
 /* ---------- Images ---------- */
@@ -26,12 +26,14 @@ for (const [key, meta] of Object.entries(mediaCatalog)) {
   const found = await api('GET', `/files?filter[filename_download][_eq]=${encodeURIComponent(name)}&fields=id&limit=1`)
   if (found.length) {
     fileIds[key] = found[0].id
+    const current = await api('GET', `/files/${found[0].id}?fields=alt_en`)
+    if (empty(current?.alt_en)) await api('PATCH', `/files/${found[0].id}`, { alt_en: meta.alt.en })
     continue
   }
   const form = new FormData()
   // Les métadonnées doivent précéder le fichier dans le formulaire.
   const fields = {
-    title: meta.alt.fr, alt_fr: meta.alt.fr, alt_ar: meta.alt.ar, credit_author: meta.author, license: meta.license,
+    title: meta.alt.fr, alt_fr: meta.alt.fr, alt_ar: meta.alt.ar, alt_en: meta.alt.en, credit_author: meta.author, license: meta.license,
     license_url: meta.licenseUrl ?? '', source_url: meta.sourceUrl, position: positions[meta.position] ?? 'center', is_public: 'true',
   }
   for (const [k, v] of Object.entries(fields)) form.append(k, v)
@@ -109,7 +111,7 @@ const masterImages = ['hilye', 'ainMadhi', 'bayeNiasse', 'dunes']
 const lifeImages = ['tasbih', 'medinaBaye', 'enseignement', 'dunes']
 await seedCollection('home_cards', [
   ...fr.homePage.masters.items.map((item, i) => ({
-    status: 'published', group: 'masters', sort: i + 1, href: item.href, title_fr: item.name, title_ar: item.nameAr,
+    status: 'published', group: 'masters', sort: i + 1, href: item.href, title_fr: item.name, title_ar: item.nameAr, title_en: en.homePage.masters.items[i].name,
     ...both('body', (d) => d.homePage.masters.items[i].role),
     ...both('meta', (d) => d.homePage.masters.items[i].meta),
     image: fileIds[masterImages[i]] ?? null,
@@ -156,5 +158,36 @@ await seedCollection('pages', (await sitePaths()).map((p) => ({
   ...both('title', (d) => label(d, p)),
   ...(p.includes('/') ? {} : both('summary', (d) => d.sections[p].intro)),
 })))
+
+/* ---------- Anglais des fiches existantes ---------- */
+
+// Sur une base remplie avant l'ajout de l'anglais, les fiches n'ont pas de champ `_en`. Un champ `_en` vide reçoit
+// la traduction du dictionnaire si le texte français est resté celui d'origine ; un texte réécrit reste à traduire.
+const english = new Map()
+const pair = (a, b) => {
+  if (typeof a === 'string') {
+    if (typeof b === 'string' && a && !english.has(a)) english.set(a, b)
+  } else if (a && typeof a === 'object' && b && typeof b === 'object') {
+    for (const key of Object.keys(a)) pair(a[key], b[key])
+  }
+}
+pair(fr, en)
+
+for (const collection of ['home_sections', 'home_cards', 'events', 'pages']) {
+  let count = 0
+  for (const item of await api('GET', `/items/${collection}?limit=-1&fields=*`)) {
+    const patch = {}
+    for (const [key, value] of Object.entries(item)) {
+      if (!key.endsWith('_fr') || typeof value !== 'string') continue
+      const target = `${key.slice(0, -3)}_en`
+      if (target in item && empty(item[target]) && english.has(value.trim())) patch[target] = english.get(value.trim())
+    }
+    if (Object.keys(patch).length) {
+      await api('PATCH', `/items/${collection}/${item.id}`, patch)
+      count++
+    }
+  }
+  if (count) log(`${collection} : anglais ajouté à ${count} fiche(s)`)
+}
 
 log('Import terminé. Vérifier les fiches puis publier depuis Directus.')

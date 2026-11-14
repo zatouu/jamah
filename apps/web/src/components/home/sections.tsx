@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import type { Locale } from '@/i18n/config'
+import { intlLocale, type Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
 import type { GalleryTile, SiteContent } from '@/content/site-content'
 import type { VideoEntry } from '@/content/videos'
@@ -152,7 +152,7 @@ export function Masters({ locale, dict, content }: SectionProps) {
                 )}
                 <div className="p-5">
                   <p lang="ar" dir="rtl" className="font-quran text-2xl leading-relaxed text-forest-800">{item.nameAr}</p>
-                  {locale === 'fr' && <h3 className="font-display text-lg text-forest-900">{item.name}</h3>}
+                  {locale !== 'ar' && <h3 className="font-display text-lg text-forest-900">{item.name}</h3>}
                   <p className="mt-2 text-sm leading-relaxed text-muted">{item.role}</p>
                   <div className="mt-4 flex items-center justify-between text-xs">
                     <span className="text-ochre">{item.meta}</span>
@@ -175,7 +175,7 @@ export function Masters({ locale, dict, content }: SectionProps) {
 
 export function Progression({ locale, dict }: SectionProps) {
   const t = dict.homePage.progression
-  const fmt = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr')
+  const fmt = new Intl.NumberFormat(intlLocale(locale))
   return (
     <Section id="parcours" eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
@@ -209,7 +209,7 @@ export function KhayriSpotlight({ locale, dict, content }: SectionProps) {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ochre rtl:tracking-normal">{t.eyebrow}</p>
           <h2 className="mt-2 font-display text-3xl text-forest-900 md:text-[2.5rem] rtl:leading-[1.4]">{t.title}</h2>
-          {locale === 'fr' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-700">الشيخ ولد خيري</p>}
+          {locale !== 'ar' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-700">الشيخ ولد خيري</p>}
           <p className="mt-4 leading-relaxed text-muted">{t.body}</p>
           <ul className="mt-5 flex flex-wrap gap-2">
             {siteSections['cheikh-ould-khayri'].map((child) => (
@@ -243,7 +243,7 @@ export function MbowSpotlight({ locale, dict, videos: allVideos }: SectionProps 
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-forest-100/80 rtl:tracking-normal">{t.eyebrow}</p>
           <h2 className="mt-2 font-display text-3xl md:text-[2.5rem] rtl:leading-[1.4]">{t.title}</h2>
-          {locale === 'fr' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-100">الشيخ عثمان امبو</p>}
+          {locale !== 'ar' && <p lang="ar" dir="rtl" className="mt-1 font-quran text-2xl text-forest-100">الشيخ عثمان امبو</p>}
           <p className="mt-4 leading-relaxed text-ivory/80">{t.body}</p>
           <p className="mt-3 text-xs text-ivory/70">{t.note}</p>
           <div className="mt-6 flex flex-wrap gap-2">
@@ -326,9 +326,9 @@ export function CommunityLife({ locale, dict, content }: SectionProps) {
 export function Gatherings({ locale, dict, content }: SectionProps) {
   const t = dict.homePage.gatherings
   const { countdown } = content
-  const fmtDate = new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'fr', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
-  const fmtNum = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'fr')
-  const plural = countdown ? new Intl.PluralRules(locale === 'ar' ? 'ar' : 'fr').select(countdown.daysLeft) : 'other'
+  const fmtDate = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  const fmtNum = new Intl.NumberFormat(intlLocale(locale))
+  const plural = countdown ? new Intl.PluralRules(locale).select(countdown.daysLeft) : 'other'
   const daysText = t.daysLeft[plural === 'zero' ? 'other' : plural]
   return (
     <Section id="rendez-vous" tone="dark" eyebrow={t.eyebrow} title={t.title}>

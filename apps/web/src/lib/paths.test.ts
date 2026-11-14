@@ -10,5 +10,6 @@ describe('paths', () => {
   it('change de langue en conservant la page', () => {
     expect(switchLocalePath('/fr/cheikh-ousmane-mbow/videotheque', 'ar')).toBe('/ar/cheikh-ousmane-mbow/videotheque')
     expect(switchLocalePath('/ar', 'fr')).toBe('/fr')
+    expect(switchLocalePath('/fr/fayda/oeuvres', 'en')).toBe('/en/fayda/oeuvres')
   })
 })

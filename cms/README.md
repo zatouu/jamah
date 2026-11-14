@@ -1,6 +1,6 @@
 ﻿# CMS - Directus
 
-Directus gère tout le contenu du site : textes de l'accueil, coordonnées, pages de rubriques (FR/AR), images et
+Directus gère tout le contenu du site : textes de l'accueil, coordonnées, pages de rubriques (FR/AR/EN), images et
 crédits, galerie, rendez-vous, vidéos, documents. Les données sont dans PostgreSQL.
 
 - Interface : http://localhost:8055 (identifiants : `DIRECTUS_ADMIN_EMAIL` / `DIRECTUS_ADMIN_PASSWORD` du `.env`).
@@ -20,7 +20,8 @@ docker compose run --rm cms-setup
 - `bootstrap.mjs` : collections et champs, champs de crédit sur les fichiers, droits du rôle Public (lecture des seules
   fiches publiées et des seuls fichiers « Visible sur le site »), rôles Rédacteur et Relecteur, flow « Mise à jour du site ».
 - `seed.mjs` : importe les textes et images actuels du site dans les champs et collections encore vides.
-  Les 78 pages de rubrique sont créées en brouillon, sans corps.
+  Les 78 pages de rubrique sont créées en brouillon, sans corps. Sur une base déjà remplie, il ajoute l'anglais aux
+  fiches dont le texte français est resté celui d'origine ; un texte français réécrit reste à traduire à la main.
 
 Hors Docker : Node 22.18 minimum, `DIRECTUS_URL`, et `DIRECTUS_TOKEN` (ou e-mail / mot de passe administrateur).
 
@@ -37,7 +38,8 @@ Pour chaque image, renseigner l'auteur, la licence et la source : la page Crédi
 
 ## Règles de saisie
 
-- Chaque texte a deux champs : `_fr` et `_ar`. Un champ vide garde le texte par défaut du site (rien ne casse).
+- Chaque texte a trois champs : `_fr`, `_ar` et `_en`. Un champ vide garde le texte par défaut du site (rien ne casse).
+  Exception : dans les listes (cartes de l'accueil, rendez-vous), un champ anglais vide affiche le français.
 - Une page de rubrique devient visible par les moteurs de recherche et entre dans le sitemap dès que son corps est
   publié dans la langue concernée. Sans corps, elle reste « en préparation » (noindex).
 - Corps en Markdown simple : titres `##`, listes, **gras**, *italique*, liens, citations `>`. Le HTML n'est pas interprété.
@@ -46,7 +48,8 @@ Pour chaque image, renseigner l'auteur, la licence et la source : la page Crédi
 ## Transcription et traduction des vidéos
 
 Collection **Transcriptions** (une fiche par vidéo). L'interface affiche le lecteur à gauche et les segments à droite :
-horodatage début / fin, transcription dans la langue parlée, traduction française, traduction arabe (facultative), remarque.
+horodatage début / fin, transcription dans la langue parlée, traduction française, traductions arabe et anglaise
+(facultatives, à afficher par les cases à cocher), remarque.
 
 1. Créer ou choisir la fiche **Vidéos** (identifiant YouTube, ou fichier vidéo / audio joint s'il n'est pas sur YouTube).
 2. Créer une fiche **Transcriptions**, choisir la vidéo : le lecteur apparaît.
@@ -55,6 +58,25 @@ horodatage début / fin, transcription dans la langue parlée, traduction franç
 4. Enregistrer souvent. Passer en relecture, puis publication par un relecteur.
 
 Les notes internes et le fichier média ne sont jamais exposés au public. Le site n'affiche pas encore les transcriptions.
+
+## Traduction et correction des textes
+
+Collection **Traductions de textes** (une fiche par texte). L'interface aligne chaque paragraphe : original à gauche,
+traductions française, arabe et anglaise à droite (cases à cocher pour choisir les langues affichées). Si un fichier
+PDF ou une image est joint, il s'affiche à côté pour vérifier la saisie.
+
+1. Créer une fiche, indiquer la langue de l'original ; joindre le fichier original, ou choisir un document de la bibliothèque.
+2. « Importer un texte » : coller le texte original ; chaque ligne vide sépare deux paragraphes. « Fusionner avec le
+   suivant » et « Insérer après » corrigent le découpage.
+3. Traduire ou coller une traduction existante dans la colonne de la langue.
+4. Correction : le traducteur qualifié corrige directement la traduction puis coche « Relu ». Toute modification ultérieure
+   d'une traduction relue retire la coche. « Non relus seulement » n'affiche que ce qui reste à relire ; le compteur
+   indique l'avancement par langue.
+5. Enregistrer souvent ; passer en relecture, puis publication par un relecteur.
+
+Une seule personne à la fois par fiche : Directus n'a pas d'édition simultanée, le dernier enregistrement l'emporte.
+L'historique (onglet « Révisions ») permet de revenir à une version précédente. Les notes internes et le fichier
+original ne sont jamais exposés au public. Le site n'affiche pas encore ces traductions.
 
 ## Délai d'affichage
 

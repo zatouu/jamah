@@ -1,4 +1,4 @@
-import type { Locale } from '@/i18n/config'
+import { locales, type Locale } from '@/i18n/config'
 import { asFile, cmsAssetPath, cmsItems, pick, safeUrl, text, withFiles, type CmsFileRef } from '@/lib/cms'
 import { fileImage } from './site-content'
 import type { SiteImage } from './media'
@@ -9,7 +9,7 @@ import { videos as defaultVideos, type EditorialStatus, type VideoEntry, type Vi
 export type SourceNature = 'documented' | 'testimony' | 'community' | 'interpretation' | 'jamah'
 const sourceNatures: ReadonlySet<string> = new Set(['documented', 'testimony', 'community', 'interpretation', 'jamah'])
 
-type Localized<K extends string> = Partial<Record<`${K}_fr` | `${K}_ar`, string | null>>
+type Localized<K extends string> = Partial<Record<`${K}_${Locale}`, string | null>>
 
 type CmsPage = Localized<'title' | 'summary' | 'body'> & {
   path: string
@@ -70,7 +70,7 @@ export type RubricDocument = {
 export async function getRubricDocuments(path: string, lang: Locale): Promise<RubricDocument[]> {
   const items = await cmsItems<CmsDocument>('documents', { fields: withFiles('file'), 'filter[page_path][_eq]': path, sort: '-date' })
   return (items ?? []).flatMap((doc) => {
-    const title = pick(doc, 'title', lang) ?? pick(doc, 'title', lang === 'fr' ? 'ar' : 'fr')
+    const title = pick(doc, 'title', lang) ?? locales.map((l) => pick(doc, 'title', l)).find(Boolean)
     if (!title) return []
     const file = asFile(doc.file)
     const ext = text(file?.filename_download)?.split('.').pop()

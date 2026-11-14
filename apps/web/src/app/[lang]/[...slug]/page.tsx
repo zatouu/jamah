@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { isLocale, locales, type Locale } from '@/i18n/config'
+import { intlLocale, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/get-dictionary'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
 import { Breadcrumb, type Crumb } from '@/components/breadcrumb'
@@ -97,7 +97,7 @@ function SectionOverview(page: PageData) {
   const slug = target.section
   const cover = content.covers[slug]
   const isPerson = personSections.has(slug)
-  const fmt = new Intl.NumberFormat(lang === 'ar' ? 'ar-EG' : 'fr', { minimumIntegerDigits: 2 })
+  const fmt = new Intl.NumberFormat(intlLocale(lang), { minimumIntegerDigits: 2 })
   const published = isPublished(rubric)
 
   return (
@@ -108,7 +108,7 @@ function SectionOverview(page: PageData) {
             <Breadcrumb items={crumbs(page)} label={dict.a11y.breadcrumb} />
             {!published && <div className="mt-6"><StatusBadge label={dict.placeholder.eyebrow} /></div>}
             <h1 className="mt-4 font-display text-4xl text-forest-900 md:text-5xl rtl:leading-[1.4]">{page.title}</h1>
-            {isPerson && lang === 'fr' && (
+            {isPerson && lang !== 'ar' && (
               <p lang="ar" dir="rtl" className="mt-2 font-quran text-2xl text-forest-700">{getDictionary('ar').sections[slug].label}</p>
             )}
             {summary && <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{summary}</p>}

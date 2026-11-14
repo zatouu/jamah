@@ -44,7 +44,7 @@ export function SiteHeader({ locale, dict }: Props) {
           >
             <SearchIcon />
           </Link>
-          <LanguageSwitcher locale={locale} label={dict.langLabel} ariaLabel={dict.a11y.switchLanguage} />
+          <LanguageSwitcher locale={locale} ariaLabel={dict.a11y.switchLanguage} />
           <MobileNav items={items} labels={labels} />
         </div>
       </div>

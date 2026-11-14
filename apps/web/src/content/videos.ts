@@ -22,7 +22,7 @@ export type VideoEntry = {
     status: EditorialStatus
     kind?: VideoKind
     themes: string[]
-    language: 'fr' | 'ar' | 'wo' | 'mixed'
+    language: 'fr' | 'ar' | 'en' | 'wo' | 'mixed'
     summary?: string
     speakers?: string[]
     chapters?: VideoChapter[]

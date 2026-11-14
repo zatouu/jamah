@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Crée (ou complète) le modèle de contenu Directus du site, les rôles éditoriaux, les droits publics
-// et le flow de mise à jour du site. Idempotent : ce qui existe déjà n'est ni modifié ni supprimé.
+// et le flow de mise à jour du site. Idempotent : rien n'est supprimé ; ce qui existe n'est pas modifié, sauf les
+// droits de lecture publics, qui reçoivent les champs ajoutés depuis (ex. traductions anglaises).
 //
 // Usage (Node >= 22.18) :
 //   DIRECTUS_URL=http://localhost:8055 DIRECTUS_ADMIN_EMAIL=... DIRECTUS_ADMIN_PASSWORD=... \
@@ -98,10 +99,11 @@ const F = {
     },
     schema: opts.unique ? { is_unique: true } : {},
   }),
-  /** Champ bilingue : `<field>_fr` et `<field>_ar`, côte à côte. */
+  /** Champ multilingue : `<field>_fr`, `<field>_ar` et `<field>_en`. */
   i18n: (kind, field, fr, opts = {}) => [
     { ...F[kind](`${field}_fr`, `${fr} (français)`, { ...opts, width: kind === 'markdown' ? 'full' : 'half' }) },
     { ...F[kind](`${field}_ar`, `${fr} (arabe)`, { ...opts, width: kind === 'markdown' ? 'full' : 'half' }) },
+    { ...F[kind](`${field}_en`, `${fr} (anglais)`, { ...opts, width: kind === 'markdown' ? 'full' : 'half' }) },
   ].flat(),
   audit: () => [
     { field: 'user_created', type: 'uuid', relation: 'directus_users', meta: { special: ['user-created'], interface: 'select-dropdown-m2o', display: 'user', readonly: true, hidden: true, width: 'half' } },
@@ -117,7 +119,7 @@ const homeSectionKeys = [
   ['videos', 'Vidéos'], ['life', 'Vie de la Jamah'], ['gatherings', 'Rendez-vous'], ['library', 'Bibliothèque'],
   ['gallery', 'Galerie'], ['join', 'Rejoindre'],
 ]
-const languages = [['fr', 'Français'], ['ar', 'Arabe'], ['wo', 'Wolof'], ['mixed', 'Plusieurs langues']]
+const languages = [['fr', 'Français'], ['ar', 'Arabe'], ['en', 'Anglais'], ['wo', 'Wolof'], ['mixed', 'Plusieurs langues']]
 
 /* ---------- Modèle de contenu ---------- */
 
@@ -304,6 +306,28 @@ const collections = [
       ...F.audit(),
     ],
   },
+  {
+    collection: 'text_translations', icon: 'translate', name: 'Traductions de textes', status: true, display: '{{title}}',
+    note: 'Traduction et correction d’un texte, paragraphe par paragraphe : original à gauche, traductions à droite.',
+    fields: [
+      F.status(),
+      F.string('title', 'Titre', { width: 'half' }),
+      F.select('source_language', 'Langue de l’original', languages, { default: 'ar' }),
+      F.m2o('document', 'Document de la bibliothèque (facultatif)', 'documents', '{{title_fr}}'),
+      F.file('source_file', 'Fichier original (PDF ou image)', {
+        image: false, note: 'Affiché à côté du texte pour vérifier la saisie. Laisser « Visible sur le site » décoché.',
+      }),
+      {
+        field: 'segments', type: 'json',
+        meta: {
+          interface: 'jamah-text-translation', special: ['cast-json'], width: 'full', translations: label('Paragraphes'),
+          note: '« Importer un texte » découpe l’original en paragraphes. Cocher « Relu » quand la traduction d’un paragraphe est validée.',
+        },
+      },
+      F.textarea('notes', 'Notes de traduction (internes)'),
+      ...F.audit(),
+    ],
+  },
 ]
 
 /** Métadonnées ajoutées aux fichiers (crédits, accessibilité, visibilité publique). */
@@ -361,9 +385,9 @@ const structureCollections = collections.filter((c) => !c.status).map((c) => c.c
 const editable = ['draft', 'in_review']
 const publicFileFields = [
   'id', 'type', 'title', 'filename_download', 'filesize', 'width', 'height',
-  'alt_fr', 'alt_ar', 'credit_author', 'license', 'license_url', 'source_url', 'position',
+  'alt_fr', 'alt_ar', 'alt_en', 'credit_author', 'license', 'license_url', 'source_url', 'position',
 ]
-const internalFields = new Set(['notes', 'media_file'])
+const internalFields = new Set(['notes', 'media_file', 'source_file'])
 const publicFields = (c) => ['id', ...c.fields.map((f) => f.field).filter((f) => !f.startsWith('user_') && !internalFields.has(f))]
 
 async function ensurePolicy(name, description, icon) {
@@ -382,10 +406,20 @@ async function ensureRole(name, description, icon, policyId) {
 }
 
 async function ensurePermissions(policyId, permissions) {
-  const existing = await api('GET', `/permissions?filter[policy][_eq]=${policyId}&limit=-1&fields=collection,action`)
-  const has = new Set(existing.map((p) => `${p.collection}:${p.action}`))
+  const existing = await api('GET', `/permissions?filter[policy][_eq]=${policyId}&limit=-1&fields=id,collection,action,fields`)
+  const has = new Map(existing.map((p) => [`${p.collection}:${p.action}`, p]))
   for (const p of permissions) {
-    if (has.has(`${p.collection}:${p.action}`)) continue
+    const current = has.get(`${p.collection}:${p.action}`)
+    if (current) {
+      // Droit déjà présent avec une liste de champs : on y ajoute les nouveaux champs (ex. `_en`), sans rien retirer.
+      const fields = Array.isArray(current.fields) ? current.fields : []
+      const missing = Array.isArray(p.fields) && !fields.includes('*') ? p.fields.filter((f) => !fields.includes(f)) : []
+      if (missing.length) {
+        await api('PATCH', `/permissions/${current.id}`, { fields: [...fields, ...missing] })
+        log(`  ~ droit ${p.action} sur ${p.collection} : ${missing.length} champ(s) ajouté(s)`)
+      }
+      continue
+    }
     await api('POST', '/permissions', { policy: policyId, fields: ['*'], permissions: {}, validation: {}, ...p })
     log(`  + droit ${p.action} sur ${p.collection}`)
   }

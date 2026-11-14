@@ -22,6 +22,7 @@ export type CmsFile = {
   filesize?: string | number | null
   alt_fr?: string | null
   alt_ar?: string | null
+  alt_en?: string | null
   credit_author?: string | null
   license?: string | null
   license_url?: string | null
@@ -72,7 +73,7 @@ async function cmsFetch<T>(path: string, params: Record<string, string>): Promis
   }
 }
 
-const FILE_FIELDS = ['id', 'type', 'title', 'filename_download', 'filesize', 'alt_fr', 'alt_ar', 'credit_author', 'license', 'license_url', 'source_url', 'position']
+const FILE_FIELDS = ['id', 'type', 'title', 'filename_download', 'filesize', 'alt_fr', 'alt_ar', 'alt_en', 'credit_author', 'license', 'license_url', 'source_url', 'position']
 
 export function fileFields(relation: string): string[] {
   return FILE_FIELDS.map((f) => `${relation}.${f}`)
@@ -96,7 +97,7 @@ export function cmsItems<T>(collection: string, params: Record<string, string> =
   })
 }
 
-/** Texte localisé `<champ>_fr` / `<champ>_ar`, ou undefined s'il est vide. */
+/** Texte localisé `<champ>_fr` / `_ar` / `_en`, ou undefined s'il est vide. */
 export function pick(item: object | null | undefined, field: string, lang: string): string | undefined {
   const value = (item as Record<string, unknown> | null | undefined)?.[`${field}_${lang}`]
   return typeof value === 'string' && value.trim() ? value.trim() : undefined

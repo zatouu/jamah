@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
 import { Amiri, Inter, Noto_Naskh_Arabic, Source_Serif_4 } from 'next/font/google'
-import { getDirection, isLocale, locales } from '@/i18n/config'
+import { getDirection, isLocale, locales, ogLocales } from '@/i18n/config'
 import { getSiteContent } from '@/content/site-content'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
@@ -38,7 +38,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       siteName: meta.siteName,
       title: meta.title,
       description: meta.description,
-      locale: lang === 'ar' ? 'ar_AR' : 'fr_FR',
+      locale: ogLocales[lang],
+      alternateLocale: locales.filter((l) => l !== lang).map((l) => ogLocales[l]),
     },
   }
 }

@@ -1,6 +1,20 @@
-export const locales = ['fr', 'ar'] as const
+export const locales = ['fr', 'ar', 'en'] as const
 export type Locale = (typeof locales)[number]
 export const defaultLocale: Locale = 'fr'
+
+/** Nom de chaque langue dans sa propre langue (sélecteur de langue). */
+export const localeNames: Record<Locale, string> = { fr: 'Français', ar: 'العربية', en: 'English' }
+
+/** Libellé court affiché dans l'en-tête. */
+export const localeShortNames: Record<Locale, string> = { fr: 'FR', ar: 'ع', en: 'EN' }
+
+/** Locale BCP 47 pour Intl (chiffres arabes orientaux en arabe). */
+export function intlLocale(locale: Locale): string {
+  return locale === 'ar' ? 'ar-EG' : locale
+}
+
+/** Locale Open Graph. */
+export const ogLocales: Record<Locale, string> = { fr: 'fr_FR', ar: 'ar_AR', en: 'en_US' }
 
 const rtlLocales: ReadonlySet<string> = new Set(['ar'])
 

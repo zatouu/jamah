@@ -42,6 +42,22 @@ describe('mergeSiteContent', () => {
     expect(content.dict.homePage.progression.items).toEqual(getDictionary('fr').homePage.progression.items)
   })
 
+  it('en anglais, une fiche de liste non traduite reprend le français, les champs isolés gardent le dictionnaire', () => {
+    const content = mergeSiteContent('en', {
+      ...empty,
+      home: { title_fr: 'Titre FR' },
+      cards: [
+        { group: 'masters', href: 'fayda', title_fr: 'Nom', title_en: 'Name', title_ar: 'اسم', body_fr: 'Rôle' },
+        { group: 'life', href: 'jamah', title_fr: 'Vie', title_en: 'Life', body_fr: 'Corps' },
+      ],
+      events: [{ show_on_home: true, title_fr: 'Gamou', place_fr: 'Boubacar' }],
+    }, now)
+    expect(content.dict.homePage.title).toBe(getDictionary('en').homePage.title)
+    expect(content.dict.homePage.masters.items).toEqual([{ href: 'fayda', nameAr: 'اسم', name: 'Name', role: 'Rôle', meta: '' }])
+    expect(content.dict.homePage.life.items).toEqual([{ href: 'jamah', title: 'Life', body: 'Corps' }])
+    expect(content.dict.homePage.gatherings.items[0]).toMatchObject({ title: 'Gamou', place: 'Boubacar' })
+  })
+
   it('le compte à rebours suit l’événement mis en avant le plus proche, ou disparaît', () => {
     const withEvents = (events: CmsSiteData['events']) => mergeSiteContent('fr', { ...empty, events }, now).countdown
     const soon = withEvents([

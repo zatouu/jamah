@@ -9,7 +9,7 @@ import { SourceNatureBadge } from '@/components/rubric/rubric-parts'
 function formatDate(value: string, locale: Locale, withDay = true): string | undefined {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return undefined
-  return new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'fr', {
+  return new Intl.DateTimeFormat(locale, {
     day: withDay ? 'numeric' : undefined,
     month: 'long',
     year: 'numeric',
