@@ -10,10 +10,9 @@ export const fr = {
     mainNav: 'Navigation principale',
     menu: 'Menu',
     breadcrumb: 'Fil d’Ariane',
-    switchLanguage: 'Lire en arabe',
+    switchLanguage: 'Choisir la langue',
   },
   brand: { prefix: 'Jamah', name: 'Sayroul Abad', mark: 'J' },
-  langLabel: 'العربية',
   home: 'Accueil',
   sections: {
     'comprendre-islam': {

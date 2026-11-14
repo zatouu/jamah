@@ -1,5 +1,5 @@
 import { cache } from 'react'
-import type { Locale } from '@/i18n/config'
+import { locales, type Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries/fr'
 import { getDictionary } from '@/i18n/get-dictionary'
 import { nextAnnualDate } from '@/lib/calendar'
@@ -15,7 +15,7 @@ import { sectionMedia } from './section-media'
  * dès qu'une valeur y est saisie. Un champ vide dans le CMS laisse la valeur par défaut.
  */
 
-type Localized<K extends string> = Partial<Record<`${K}_fr` | `${K}_ar`, string | null>>
+type Localized<K extends string> = Partial<Record<`${K}_${Locale}`, string | null>>
 
 export type CmsSettings = Localized<'site_name' | 'seo_title' | 'seo_description' | 'tagline' | 'footer_editorial' | 'address'> & {
   contact_email?: string | null
@@ -151,9 +151,17 @@ const defaultImages = {
 
 const DAY_MS = 86_400_000
 
+/**
+ * Texte d'une fiche de liste (cartes, rendez-vous). Une liste saisie dans le CMS remplace celle du
+ * dictionnaire : en anglais, un champ pas encore traduit reprend le français plutôt que d'être vide.
+ */
+function pickItem(item: object, field: string, lang: Locale): string | undefined {
+  return pick(item, field, lang) ?? (lang === 'en' ? pick(item, field, 'fr') : undefined)
+}
+
 function eventCountdown(event: CmsEvent, lang: Locale, now: Date): Countdown | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(event.date ?? '')
-  const label = pick(event, 'countdown_label', lang) ?? pick(event, 'title', lang)
+  const label = pickItem(event, 'countdown_label', lang) ?? pickItem(event, 'title', lang)
   if (!match || !label) return null
   const [year, month, day] = match.slice(1).map(Number)
   if (event.annual) return { label, ...nextAnnualDate(month, day, now) }
@@ -211,19 +219,19 @@ export function mergeSiteContent(lang: Locale, data: CmsSiteData, now: Date = ne
     home.masters.items = masters.map(({ card, href }) => ({
       href,
       nameAr: text(card.title_ar) ?? '',
-      name: text(card.title_fr) ?? '',
-      role: pick(card, 'body', lang) ?? '',
-      meta: pick(card, 'meta', lang) ?? '',
+      name: (lang === 'en' ? pick(card, 'title', 'en') : undefined) ?? text(card.title_fr) ?? '',
+      role: pickItem(card, 'body', lang) ?? '',
+      meta: pickItem(card, 'meta', lang) ?? '',
     }))
     images.masters = masters.map(({ card }) => fileImage(card.image, lang))
   }
   const progression = cards('progression')
   if (progression.length) {
-    home.progression.items = progression.map(({ card, href }) => ({ href, title: pick(card, 'title', lang) ?? '', body: pick(card, 'body', lang) ?? '' }))
+    home.progression.items = progression.map(({ card, href }) => ({ href, title: pickItem(card, 'title', lang) ?? '', body: pickItem(card, 'body', lang) ?? '' }))
   }
   const life = cards('life')
   if (life.length) {
-    home.life.items = life.map(({ card, href }) => ({ href, title: pick(card, 'title', lang) ?? '', body: pick(card, 'body', lang) ?? '' }))
+    home.life.items = life.map(({ card, href }) => ({ href, title: pickItem(card, 'title', lang) ?? '', body: pickItem(card, 'body', lang) ?? '' }))
     images.life = life.map(({ card }) => fileImage(card.image, lang))
   }
 
@@ -231,13 +239,13 @@ export function mergeSiteContent(lang: Locale, data: CmsSiteData, now: Date = ne
   let countdown: Countdown | null = { label: home.gatherings.countdownLabel, ...nextAnnualDate(4, 20, now) }
   const events = data.events ?? []
   if (events.length) {
-    const shown = events.filter((e) => e.show_on_home && pick(e, 'title', lang))
+    const shown = events.filter((e) => e.show_on_home && pickItem(e, 'title', lang))
     if (shown.length) {
       home.gatherings.items = shown.map((e) => ({
-        title: pick(e, 'title', lang) ?? '',
-        place: pick(e, 'place', lang) ?? '',
-        body: pick(e, 'body', lang) ?? '',
-        sourceLabel: pick(e, 'source_label', lang) ?? '',
+        title: pickItem(e, 'title', lang) ?? '',
+        place: pickItem(e, 'place', lang) ?? '',
+        body: pickItem(e, 'body', lang) ?? '',
+        sourceLabel: pickItem(e, 'source_label', lang) ?? '',
         sourceUrl: safeUrl(e.source_url) ?? '',
       }))
     }
@@ -295,7 +303,9 @@ export function mergeSiteContent(lang: Locale, data: CmsSiteData, now: Date = ne
 }
 
 const PAGE_SUMMARY_FIELDS = [
-  'path', 'title_fr', 'title_ar', 'nav_label_fr', 'nav_label_ar', 'summary_fr', 'summary_ar', 'body_fr', 'body_ar', 'date_updated', 'date_created', ...fileFields('cover'),
+  'path',
+  ...['title', 'nav_label', 'summary', 'body'].flatMap((field) => locales.map((l) => `${field}_${l}`)),
+  'date_updated', 'date_created', ...fileFields('cover'),
 ].join(',')
 
 const loadSiteData = cache(async (): Promise<CmsSiteData> => {

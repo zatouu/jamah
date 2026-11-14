@@ -1,5 +1,5 @@
 // Interface Directus « Transcription synchronisée » : lecteur (YouTube ou fichier) à gauche,
-// segments horodatés (transcription, traduction FR/AR, remarque) à droite.
+// segments horodatés (transcription, traduction FR/AR/EN, remarque) à droite.
 // Écrite sans étape de build : Directus fournit `vue` et `@directus/extensions-sdk` aux extensions de l'application.
 import { computed, defineComponent, h, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useApi } from '@directus/extensions-sdk'
@@ -28,7 +28,7 @@ function parseTime(input) {
   return round(parts.reduce((acc, p) => acc * 60 + Number(p), 0))
 }
 
-const blank = (start) => ({ start, end: null, original: '', fr: '', ar: '', note: '' })
+const blank = (start) => ({ start, end: null, original: '', fr: '', ar: '', en: '', note: '' })
 const byStart = (a, b) => (a.start ?? 0) - (b.start ?? 0)
 
 const css = `
@@ -78,6 +78,7 @@ const TranscriptionInterface = defineComponent({
     const rate = ref(1)
     const display = ref(0)
     const showArabic = ref(segments.value.some((s) => s?.ar))
+    const showEnglish = ref(segments.value.some((s) => s?.en))
     let reported = 0
     let reportedAt = 0
     let stopAt = null
@@ -198,7 +199,7 @@ const TranscriptionInterface = defineComponent({
 
     function remove(i) {
       const s = segments.value[i]
-      if ((s.original || s.fr || s.ar || s.note) && !confirm(`Supprimer le segment ${i + 1} et son texte ?`)) return
+      if ((s.original || s.fr || s.ar || s.en || s.note) && !confirm(`Supprimer le segment ${i + 1} et son texte ?`)) return
       commit(segments.value.filter((_, k) => k !== i))
     }
 
@@ -272,7 +273,7 @@ const TranscriptionInterface = defineComponent({
       return h('label', { class: 'jt-field' }, [
         h('span', labelText),
         h('textarea', {
-          value: s[key] ?? '', dir, rows, readonly: props.disabled, lang: key === 'ar' || key === 'fr' ? key : undefined,
+          value: s[key] ?? '', dir, rows, readonly: props.disabled, lang: ['fr', 'ar', 'en'].includes(key) ? key : undefined,
           onInput: (event) => update(i, { [key]: event.target.value }),
         }),
       ])
@@ -294,6 +295,7 @@ const TranscriptionInterface = defineComponent({
         area(s, i, 'original', 'Transcription (langue parlée)', 'auto'),
         area(s, i, 'fr', 'Traduction française', 'ltr'),
         showArabic.value || s.ar ? area(s, i, 'ar', 'Traduction arabe', 'rtl') : null,
+        showEnglish.value || s.en ? area(s, i, 'en', 'Traduction anglaise', 'ltr') : null,
         area(s, i, 'note', 'Remarque (terme incertain, contexte, référence citée…)', 'auto', 1),
       ])
     }
@@ -316,6 +318,10 @@ const TranscriptionInterface = defineComponent({
         h('label', { class: 'jt-help' }, [
           h('input', { type: 'checkbox', checked: showArabic.value, onChange: (event) => { showArabic.value = event.target.checked } }),
           ' Afficher la traduction arabe',
+        ]),
+        h('label', { class: 'jt-help' }, [
+          h('input', { type: 'checkbox', checked: showEnglish.value, onChange: (event) => { showEnglish.value = event.target.checked } }),
+          ' Afficher la traduction anglaise',
         ]),
         h('p', { class: 'jt-help' }, 'Ctrl+Entrée : nouveau segment · Ctrl+Espace : lecture / pause · Alt+← / Alt+→ : 5 secondes.'),
       ]),

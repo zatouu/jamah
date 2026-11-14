@@ -54,7 +54,10 @@ Fait :
 
 - Modèle : `cms/scripts/bootstrap.mjs` (idempotent) ; import initial : `cms/scripts/seed.mjs` ; `docker compose run --rm cms-setup`.
   Guide éditeur : `cms/README.md`.
-- Champs localisés `<champ>_fr` / `<champ>_ar`. Champ CMS vide = valeur par défaut (dictionnaires `src/i18n`, images locales).
+- Champs localisés `<champ>_fr` / `<champ>_ar` / `<champ>_en`. Champ CMS vide = valeur par défaut (dictionnaires `src/i18n`,
+  images locales) ; dans les listes CMS (cartes, rendez-vous), l'anglais vide reprend le français (`pickItem`).
+- Langues du site : `fr`, `ar`, `en` (`src/i18n/config.ts` : `locales`, `localeNames`, `intlLocale`, `ogLocales`).
+  Dictionnaire anglais `en.ts` provisoire, à relire. Ajouter une langue = config + dictionnaire + `F.i18n` du bootstrap.
 - Lecture : `src/lib/cms.ts` (rôle Public, `revalidate: 300`, tag `cms`) ; `src/content/site-content.ts` (accueil, réglages,
   images, couvertures, pages publiées) ; `src/content/cms-pages.ts` (rubriques, documents, vidéos).
   Erreur CMS : au build avertissement + repli ; à l'exécution exception (l'ISR garde la dernière page valide).
@@ -64,16 +67,23 @@ Fait :
   contre un faux Directus. **Non vérifié** : `npm run lint/typecheck/build`, Directus 11 réel (nom de la politique Public,
   flow `request` vers un hôte interne), rendu visuel.
 
-- Transcription : collection `transcriptions` (une par vidéo, `segments` JSON `{start, end, original, fr, ar, note}` en
+- Transcription : collection `transcriptions` (une par vidéo, `segments` JSON `{start, end, original, fr, ar, en, note}` en
   secondes) éditée par l'extension sans build `cms/extensions/jamah-transcription` (lecteur YouTube via postMessage, ou
   fichier `videos.media_file`). CSP Directus : `frame-src` youtube-nocookie dans le compose. Pas encore affichée sur le site.
+- Traduction de textes : collection `text_translations` (`segments` JSON `{original, fr, ar, en, note, reviewed: {fr, ar, en}}`),
+  extension sans build `cms/extensions/jamah-text-translation` (aperçu PDF / image de `source_file` ou du fichier du
+  `document` lié, import par paragraphes, case « Relu » par langue, remise à zéro si la traduction change). Pas d'édition
+  simultanée dans Directus 11.5 (dernier enregistrement gagnant, révisions conservées). Pas encore affichée sur le site.
+- `bootstrap.mjs` complète les droits de lecture Public existants avec les champs ajoutés (ex. `_en`) ; `seed.mjs`
+  renseigne `_en` des fiches existantes dont le français est celui du dictionnaire.
 - Transfert entre postes : `git bundle` (pas de push depuis ce poste).
 
 Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche est reportée en 2e partie :
 1. Valider sur une machine avec Node/Docker : `npm ci && npm run lint && npm run typecheck && npm test && npm run build`,
    puis `docker compose up -d` + `cms-setup`, publication d'une page test, vérification du flow, essai de l'interface
    de transcription (YouTube et fichier).
-2. Extraits commentés : collection `excerpts` (vidéo, début/fin, commentaire FR/AR) et affichage des transcriptions publiées.
+2. Extraits commentés : collection `excerpts` (vidéo, début/fin, commentaire FR/AR/EN) et affichage des transcriptions
+   et traductions de textes publiées (lecteur côte à côte public).
 3. Import YouTube : flux RSS de la chaîne → vidéos en `draft` ; clé YouTube Data API plus tard pour l'historique complet.
 4. sufi-knowledge : réactiver le cluster Atlas, commiter ses 217 modifications, `tools/inventory-mongo`, migration ponctuelle
    des documents utiles en `draft` (droits vérifiés) ; porter citations, découpage, lecteur comparatif, apprentissage des poèmes.
@@ -82,7 +92,8 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
    (CI verte → image GHCR → rsync + `docker compose up` par SSH). `apps/web/deploy/deploy.sh` reste l'ancienne voie (VM partagée).
    Première mise en service : `docker compose -f deploy/compose.prod.yml --env-file .env --profile tools run --rm cms-setup`.
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
-7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses).
+7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses ; ajouter
+   l'anglais aux analyseurs de `services/search`).
 
 À obtenir de la Jamah : graphie arabe du nom, présentation de la Jamah, contact, présentation validée de Cheikh Ousmane Mbow
 et portrait (avec accord), réponses au dossier biographique §5, photos (auteur, date, accord), premiers écrits de Cheikh

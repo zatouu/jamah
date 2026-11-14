@@ -1,0 +1,14 @@
+{
+  "name": "directus-extension-jamah-text-translation",
+  "description": "Interface Directus : texte original et traductions côte à côte, paragraphe par paragraphe, avec relecture.",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "keywords": ["directus", "directus-extension", "directus-custom-interface"],
+  "directus:extension": {
+    "type": "interface",
+    "path": "index.js",
+    "source": "index.js",
+    "host": "^11.0.0"
+  }
+}

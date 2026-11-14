@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { fr } from '@/i18n/dictionaries/fr'
 import { ar } from '@/i18n/dictionaries/ar'
+import { en } from '@/i18n/dictionaries/en'
 import { expectedContent } from '@/content/editorial-spec'
 import { isKnownPath, resolveSitePath, siteSections, type SectionSlug } from './navigation'
 
@@ -40,6 +41,7 @@ function collectHrefs(node: unknown, out: string[] = []): string[] {
 describe.each([
   ['fr', fr],
   ['ar', ar],
+  ['en', en],
 ])('dictionnaire %s', (_, dict) => {
   it('couvre toutes les rubriques du sitemap', () => {
     for (const [section, children] of Object.entries(siteSections)) {
