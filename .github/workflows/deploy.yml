@@ -1,8 +1,9 @@
 name: Deploy
 
 # Après une CI verte sur main (ou à la demande) : image du site -> GHCR, puis mise à jour de la VM par SSH.
-# Secrets (environnement « production ») : VM_HOST, VM_USER, VM_SSH_KEY, VM_KNOWN_HOSTS (sortie de ssh-keyscan).
-# Variables : SITE_URL (https://...), DOCKER_PLATFORM facultatif (linux/arm64 pour une instance Graviton).
+# Secrets (environnement « production ») : VM_HOST, VM_USER, VM_SSH_KEY.
+# Variables : SITE_URL (https://...), VM_KNOWN_HOSTS (sortie de ssh-keyscan, ou en secret),
+# DOCKER_PLATFORM facultatif (linux/arm64 pour une instance Graviton).
 on:
   workflow_run:
     workflows: [CI]
@@ -73,8 +74,9 @@ jobs:
       - name: Accès SSH
         env:
           SSH_KEY: ${{ secrets.VM_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.VM_KNOWN_HOSTS }}
+          KNOWN_HOSTS: ${{ vars.VM_KNOWN_HOSTS || secrets.VM_KNOWN_HOSTS }}
         run: |
+          test -n "$KNOWN_HOSTS" || { echo "::error::VM_KNOWN_HOSTS manquant (variable ou secret de l'environnement production)"; exit 1; }
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
