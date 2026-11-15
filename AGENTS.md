@@ -24,6 +24,11 @@
   `SEARCH_API_URL` optionnel (vide = la page de recherche annonce « bientôt »).
 - Versions de dépendances épinglées. Pas de nouvelle dépendance npm sans mettre à jour `package-lock.json` (la CI fait `npm ci`).
 
+## Guide des rédacteurs
+- `docs/guide-redaction.md` (non technique) : toute évolution visible dans Directus ou sur le site (collection, champ,
+  rôle, extension, affichage d'un contenu) met à jour le chapitre concerné, la section « Fonctionnalités à venir »
+  et le « Journal des mises à jour ».
+
 ## Règles éditoriales
 - Ne jamais inventer citations, dates, biographies, références. Démo = « FICTIF ».
 - Pages provisoires : `noindex`, hors sitemap.

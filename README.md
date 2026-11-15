@@ -23,7 +23,7 @@ par une API stable (voir `docs/feuille-de-route.md`, « Décision : recherche et
 ### Tout en Docker
 
 ```bash
-cp .env.example .env        # puis remplacer toutes les valeurs « change-me »
+cp .env.example .env       
 docker compose up -d --build
 ```
 
@@ -94,6 +94,7 @@ Voir `.env.example` (aucune valeur réelle n'est versionnée).
 
 ## Documentation
 
+- `docs/guide-redaction.md` — guide des rédacteurs, traducteurs et relecteurs (Directus pas à pas)
 - `docs/audit-sufi-knowledge.md` — audit du projet existant et modules à porter
 - `docs/recherche/dossier-biographique.md` — dossier de recherche (non publiable)
 - `docs/feuille-de-route.md` — phases et état d'avancement
