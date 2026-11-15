@@ -473,7 +473,8 @@ if (flows.length) {
   log(`Flow « ${flowName} » non créé : définir SITE_REVALIDATE_URL et REVALIDATE_TOKEN (sinon le site se met à jour sous 5 minutes).`)
 } else {
   const flow = await api('POST', '/flows', {
-    name: flowName, icon: 'sync', color: '#2ECDA7', status: 'active', accountability: 'all',
+    // « activity » : pas de journal des exécutions (il contiendrait le jeton de l'en-tête Authorization)
+    name: flowName, icon: 'sync', color: '#2ECDA7', status: 'active', accountability: 'activity',
     description: 'Demande au site de régénérer ses pages après chaque modification.',
     trigger: 'event',
     options: { type: 'action', scope: ['items.create', 'items.update', 'items.delete'], collections: [...collections.map((c) => c.collection), 'directus_files'] },
