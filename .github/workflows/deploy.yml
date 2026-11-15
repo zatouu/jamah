@@ -158,7 +158,6 @@ jobs:
           compose exec -T web sh -c 'wget -qO /dev/null --header="Authorization: Bearer $REVALIDATE_TOKEN" --post-data="" http://127.0.0.1:3000/api/revalidate' \
             || echo "Régénération non effectuée (jeton absent ?) : le site relira Directus sous 5 minutes."
           # Les pages régénérées doivent aussi répondre (ISR écrit dans .next)
-          sleep 5
-          for p in fr ar en; do check "$p"; done
+          for round in 1 2; do sleep 5; for p in fr ar en fr/awliya; do check "$p"; done; done
           docker image prune -f >/dev/null
           EOF

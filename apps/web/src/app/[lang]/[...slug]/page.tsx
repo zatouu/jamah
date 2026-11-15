@@ -26,8 +26,6 @@ import { localizedAlternates } from '@/lib/site'
  */
 type Params = { params: Promise<{ lang: string; slug: string[] }> }
 
-export const dynamicParams = false
-
 const videoPages = new Set(['cheikh-ousmane-mbow/videotheque', 'bibliotheque/videos'])
 
 export function generateStaticParams() {

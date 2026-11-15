@@ -16,8 +16,8 @@ const amiri = Amiri({ subsets: ['arabic'], weight: ['400', '700'], variable: '--
 
 type Params = { params: Promise<{ lang: string }> }
 
-export const dynamicParams = false
-
+// Pas de `dynamicParams = false` : avec Next 16.1, toute page régénérée (revalidatePath, ISR) renvoyait 404
+// (NoFallbackError). Une langue inconnue reste en 404 via notFound().
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }))
 }
