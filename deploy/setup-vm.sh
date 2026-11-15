@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Préparation unique d'une VM Ubuntu 24.04 (AWS, 4 Go) pour la production.
-# Depuis le poste : scp deploy/setup-vm.sh deploy/prod.env.example ubuntu@<ip>:~
+# Depuis le poste : scp deploy/setup-vm.sh ubuntu@<ip>:~
 # Sur la VM      : sudo bash setup-vm.sh ubuntu
+# Relançable. Le fichier /opt/jamah/.env n'est pas géré ici : le workflow Deploy le réécrit à chaque
+# déploiement à partir des secrets et variables GitHub (environnement « production »).
 set -euo pipefail
 
 DEPLOY_USER="${1:-ubuntu}"
 APP_DIR=/opt/jamah
-TEMPLATE="$(dirname "$0")/prod.env.example"
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
@@ -32,21 +33,10 @@ printf 'vm.max_map_count=262144\nvm.swappiness=10\n' > /etc/sysctl.d/99-jamah.co
 sysctl --system >/dev/null
 
 mkdir -p "$APP_DIR"/data/{postgres,directus/uploads,caddy/data,caddy/config,elasticsearch,models,backups}
-chown -R "$DEPLOY_USER":"$DEPLOY_USER" "$APP_DIR"
+# Pas de chown récursif : relancer le script ne doit pas reprendre data/postgres (uid du conteneur)
+chown "$DEPLOY_USER":"$DEPLOY_USER" "$APP_DIR" "$APP_DIR/data" "$APP_DIR/data/backups" "$APP_DIR/data/models"
 # Directus et Elasticsearch tournent sous l'uid 1000
 chown -R 1000:1000 "$APP_DIR/data/directus" "$APP_DIR/data/elasticsearch"
-
-if [ ! -f "$APP_DIR/.env" ]; then
-  (
-    umask 077
-    while IFS= read -r line; do
-      while [[ "$line" == *__RANDOM__* ]]; do line="${line/__RANDOM__/$(openssl rand -hex 24)}"; done
-      printf '%s\n' "$line"
-    done < "$TEMPLATE" > "$APP_DIR/.env"
-  )
-  chown "$DEPLOY_USER":"$DEPLOY_USER" "$APP_DIR/.env"
-  echo "Créé : $APP_DIR/.env (secrets générés). Compléter SITE_DOMAIN, CMS_DOMAIN, ACME_EMAIL, DIRECTUS_ADMIN_EMAIL."
-fi
 
 # Sauvegarde quotidienne de la base (14 jours, sur le disque de la VM : compléter par des instantanés EBS)
 cat > /etc/cron.d/jamah-backup <<EOF

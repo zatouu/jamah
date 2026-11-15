@@ -91,6 +91,12 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
    Postgres ; recherche en profil `search`), `deploy/setup-vm.sh` (préparation unique), `.github/workflows/deploy.yml`
    (CI verte → image GHCR → rsync + `docker compose up` par SSH). `apps/web/deploy/deploy.sh` reste l'ancienne voie (VM partagée).
    Première mise en service : `docker compose -f deploy/compose.prod.yml --env-file .env --profile tools run --rm cms-setup`.
+   **`/opt/jamah/.env` est réécrit à chaque déploiement** depuis l'environnement GitHub `production` (liste en tête de
+   `deploy.yml`, référence `deploy/prod.env.example`) : ne jamais l'éditer sur la VM. Changer une valeur =
+   `gh secret set X -e production` / `gh variable set X -e production` puis `gh workflow run Deploy`.
+   `SITE_DOMAIN` est déduit de la variable `SITE_URL` (aussi figée dans l'image). `POSTGRES_PASSWORD` et
+   `DIRECTUS_ADMIN_PASSWORD` ne sont lus qu'à l'initialisation : les changer ensuite exige `ALTER USER` / Directus.
+   VM jamah : `ubuntu@35.180.202.239`, clé `D:\itvision\utils.pem` (empreinte : variable `VM_KNOWN_HOSTS`).
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
 7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses ; ajouter
    l'anglais aux analyseurs de `services/search`).
