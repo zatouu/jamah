@@ -10,7 +10,7 @@ name: Deploy
 #   SEARCH_EMBEDDING_MODEL, ES_JAVA_OPTS, LEGACY_SITE_DOMAIN / LEGACY_CMS_DOMAIN (anciennes adresses redirigées).
 #   www.<SITE_DOMAIN> est redirigé vers le domaine nu (enregistrement DNS www requis).
 # Courriels Directus (Brevo) : secret EMAIL_SMTP_PASSWORD (clé SMTP) + variables EMAIL_SMTP_USER (identifiant SMTP)
-#   et EMAIL_FROM (expéditeur vérifié dans Brevo) ; EMAIL_SMTP_HOST / EMAIL_SMTP_PORT facultatifs (smtp-relay.brevo.com:587).
+#   et EMAIL_FROM (adresse seule, expéditeur déclaré dans Brevo ; le nom affiché est le nom du projet Directus) ; EMAIL_SMTP_HOST / EMAIL_SMTP_PORT facultatifs (smtp-relay.brevo.com:587).
 on:
   workflow_run:
     workflows: [CI]

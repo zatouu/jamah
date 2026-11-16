@@ -466,6 +466,18 @@ await ensurePermissions(relecture, [
 ])
 await ensureRole('Relecteur', 'Valide et publie les contenus.', 'verified', relecture)
 
+/* ---------- Projet : nom (expéditeur des courriels, titre de l'interface) et lien du site ---------- */
+
+const settings = await api('GET', '/settings?fields=project_name,project_url')
+const siteUrl = process.env.SITE_URL
+if (!settings.project_name || settings.project_name === 'Directus' || (!settings.project_url && siteUrl)) {
+  await api('PATCH', '/settings', {
+    ...(!settings.project_name || settings.project_name === 'Directus' ? { project_name: 'Jamah Sayroul Abad' } : {}),
+    ...(!settings.project_url && siteUrl ? { project_url: siteUrl } : {}),
+  })
+  log('Réglages du projet renseignés (nom, lien du site).')
+}
+
 /* ---------- Flow : mise à jour du site ---------- */
 
 const revalidateUrl = process.env.SITE_REVALIDATE_URL

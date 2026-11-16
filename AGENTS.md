@@ -105,7 +105,8 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
    `SITE_DOMAIN` est déduit de la variable `SITE_URL` (aussi figée dans l'image). `POSTGRES_PASSWORD` et
    `DIRECTUS_ADMIN_PASSWORD` ne sont lus qu'à l'initialisation : les changer ensuite exige `ALTER USER` / Directus.
    Courriels Directus (invitations, mot de passe oublié) : SMTP Brevo, secret `EMAIL_SMTP_PASSWORD` + variables
-   `EMAIL_SMTP_USER`, `EMAIL_FROM` (expéditeur vérifié dans Brevo) ; sans eux, aucun courriel ne part.
+   `EMAIL_SMTP_USER`, `EMAIL_FROM` (adresse **seule**, `no-reply@sayroulabad.com` : un « Nom <adresse> » est refusé par
+   Brevo, « 451 Invalid from ») ; le nom affiché est le nom du projet Directus (`bootstrap.mjs`). Sans eux, aucun courriel.
    VM jamah : `ubuntu@35.180.202.239`, clé `D:\itvision\utils.pem` (empreinte : variable `VM_KNOWN_HOSTS`).
    Domaine (16/11/2026) : `sayroulabad.com` (DNS OVH : `@`, `www`, `cms` en A vers la VM ; enregistrements Brevo DKIM/DMARC).
    Site `https://sayroulabad.com` (`www` redirigé), CMS `https://cms.sayroulabad.com` ; les anciennes adresses sslip.io
