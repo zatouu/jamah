@@ -12,6 +12,8 @@ function renderInline(nodes: Inline[]): ReactNode[] {
         return <strong key={i} className="font-semibold text-ink">{renderInline(node.children)}</strong>
       case 'em':
         return <em key={i}>{renderInline(node.children)}</em>
+      case 'code':
+        return <code key={i} dir="ltr" className="rounded bg-forest-50 px-1.5 py-0.5 font-mono text-[0.9em] text-forest-900 [overflow-wrap:anywhere]">{node.value}</code>
       case 'link':
         return (
           <a key={i} href={node.href} className="text-forest-700 underline underline-offset-4 hover:text-forest-900"
@@ -33,8 +35,25 @@ function renderBlock(block: Block, i: number): ReactNode {
   switch (block.type) {
     case 'heading': {
       const Tag = `h${block.level}` as const
-      return <Tag key={i} dir="auto" className={headingClass[block.level]}>{renderInline(block.children)}</Tag>
+      return <Tag key={i} id={block.id} dir="auto" className={`${headingClass[block.level]} scroll-mt-24`}>{renderInline(block.children)}</Tag>
     }
+    case 'table':
+      return (
+        <div key={i} className="mt-6 overflow-x-auto rounded-xl ring-1 ring-line">
+          <table className="w-full min-w-[32rem] border-collapse text-start text-sm">
+            <thead className="bg-forest-50 text-forest-900">
+              <tr>{block.header.map((cell, j) => <th key={j} dir="auto" className="px-3 py-2 text-start font-semibold">{renderInline(cell)}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {block.rows.map((row, j) => (
+                <tr key={j}>{row.map((cell, k) => <td key={k} dir="auto" className="px-3 py-2 align-top">{renderInline(cell)}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    case 'code':
+      return <pre key={i} dir="ltr" className="mt-6 overflow-x-auto rounded-xl bg-forest-900 p-4 font-mono text-xs leading-relaxed text-ivory md:text-sm">{block.value}</pre>
     case 'paragraph':
       return <p key={i} dir="auto" className="mt-4 leading-relaxed">{renderInline(block.children)}</p>
     case 'list': {
@@ -52,7 +71,7 @@ function renderBlock(block: Block, i: number): ReactNode {
   }
 }
 
-/** Texte Markdown venant du CMS, rendu sans jamais interpréter de HTML. */
-export function Markdown({ source, className = '' }: { source: string; className?: string }) {
-  return <div className={`text-ink/90 [&>*:first-child]:mt-0 ${className}`}>{parseMarkdown(source).map(renderBlock)}</div>
+/** Texte Markdown (CMS, guide), rendu sans jamais interpréter de HTML. `breaks` : voir `MarkdownOptions`. */
+export function Markdown({ source, className = '', breaks = true }: { source: string; className?: string; breaks?: boolean }) {
+  return <div className={`text-ink/90 [&>*:first-child]:mt-0 ${className}`}>{parseMarkdown(source, { breaks }).map(renderBlock)}</div>
 }

@@ -26,6 +26,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Lu à l'exécution par /fr/guide-redaction (régénérations ISR) : à copier dans le build standalone
+  outputFileTracingIncludes: { '/[lang]/guide-redaction': ['./src/content/guide-redaction.md'] },
   poweredByHeader: false,
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]

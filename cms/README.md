@@ -3,7 +3,7 @@
 Directus gère tout le contenu du site : textes de l'accueil, coordonnées, pages de rubriques (FR/AR/EN), images et
 crédits, galerie, rendez-vous, vidéos, documents. Les données sont dans PostgreSQL.
 
-- Guide des rédacteurs (non technique) : `docs/guide-redaction.md`.
+- Guide des rédacteurs (non technique) : `apps/web/src/content/guide-redaction.md`, en ligne sur `/fr/guide-redaction`.
 - Interface : http://localhost:8055 (identifiants : `DIRECTUS_ADMIN_EMAIL` / `DIRECTUS_ADMIN_PASSWORD` du `.env`).
 - `extensions/` : extensions Directus éventuelles (montées dans le conteneur).
 - `scripts/` : initialisation du modèle et import des contenus actuels du site.

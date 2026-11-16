@@ -25,7 +25,8 @@
 - Versions de dépendances épinglées. Pas de nouvelle dépendance npm sans mettre à jour `package-lock.json` (la CI fait `npm ci`).
 
 ## Guide des rédacteurs
-- `docs/guide-redaction.md` (non technique) : toute évolution visible dans Directus ou sur le site (collection, champ,
+- `apps/web/src/content/guide-redaction.md` (non technique), publié tel quel sur `/fr/guide-redaction` (hors menu,
+  `noindex`, rendu par `src/lib/markdown.ts` : tableaux, code, ancres GitHub). Toute évolution visible dans Directus ou sur le site (collection, champ,
   rôle, extension, affichage d'un contenu) met à jour le chapitre concerné, la section « Fonctionnalités à venir »
   et le « Journal des mises à jour ».
 

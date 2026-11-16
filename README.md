@@ -94,7 +94,8 @@ Voir `.env.example` (aucune valeur réelle n'est versionnée).
 
 ## Documentation
 
-- `docs/guide-redaction.md` — guide des rédacteurs, traducteurs et relecteurs (Directus pas à pas)
+- `apps/web/src/content/guide-redaction.md` — guide des rédacteurs, traducteurs et relecteurs (Directus pas à pas),
+  publié sur le site à `/fr/guide-redaction` (hors menu, `noindex`)
 - `docs/audit-sufi-knowledge.md` — audit du projet existant et modules à porter
 - `docs/recherche/dossier-biographique.md` — dossier de recherche (non publiable)
 - `docs/feuille-de-route.md` — phases et état d'avancement
