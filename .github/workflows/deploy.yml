@@ -8,6 +8,8 @@ name: Deploy
 # Variables : SITE_URL (https://...), CMS_DOMAIN, ACME_EMAIL, DIRECTUS_ADMIN_EMAIL, VM_KNOWN_HOSTS (ssh-keyscan) ;
 #   facultatives : DOCKER_PLATFORM (linux/arm64 pour Graviton), COMPOSE_PROFILES, SEARCH_API_URL,
 #   SEARCH_EMBEDDING_MODEL, ES_JAVA_OPTS.
+# Courriels Directus (Brevo) : secret EMAIL_SMTP_PASSWORD (clé SMTP) + variables EMAIL_SMTP_USER (identifiant SMTP)
+#   et EMAIL_FROM (expéditeur vérifié dans Brevo) ; EMAIL_SMTP_HOST / EMAIL_SMTP_PORT facultatifs (smtp-relay.brevo.com:587).
 on:
   workflow_run:
     workflows: [CI]
@@ -105,6 +107,11 @@ jobs:
           DIRECTUS_ADMIN_PASSWORD: ${{ secrets.DIRECTUS_ADMIN_PASSWORD }}
           REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
           SEARCH_INDEX_TOKEN: ${{ secrets.SEARCH_INDEX_TOKEN }}
+          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+          EMAIL_SMTP_HOST: ${{ vars.EMAIL_SMTP_HOST }}
+          EMAIL_SMTP_PORT: ${{ vars.EMAIL_SMTP_PORT }}
+          EMAIL_SMTP_USER: ${{ vars.EMAIL_SMTP_USER }}
+          EMAIL_SMTP_PASSWORD: ${{ secrets.EMAIL_SMTP_PASSWORD }}
           WEB_IMAGE: ${{ needs.image.outputs.image }}
           WEB_TAG: ${{ needs.image.outputs.tag }}
         run: |
@@ -113,9 +120,17 @@ jobs:
           POSTGRES_DB=jamah
           POSTGRES_USER=jamah
           required="SITE_DOMAIN CMS_DOMAIN ACME_EMAIL DIRECTUS_ADMIN_EMAIL POSTGRES_PASSWORD DIRECTUS_SECRET DIRECTUS_ADMIN_PASSWORD REVALIDATE_TOKEN SEARCH_INDEX_TOKEN WEB_IMAGE WEB_TAG"
-          optional="POSTGRES_DB POSTGRES_USER COMPOSE_PROFILES SEARCH_API_URL SEARCH_EMBEDDING_MODEL ES_JAVA_OPTS"
+          optional="POSTGRES_DB POSTGRES_USER COMPOSE_PROFILES SEARCH_API_URL SEARCH_EMBEDDING_MODEL ES_JAVA_OPTS EMAIL_TRANSPORT EMAIL_FROM EMAIL_SMTP_HOST EMAIL_SMTP_PORT EMAIL_SMTP_USER EMAIL_SMTP_PASSWORD"
           fail=
           [[ "$SITE_URL" == https://* ]] || { echo "::error::SITE_URL doit commencer par https://"; fail=1; }
+          # Courriels Directus : SMTP dès que le mot de passe SMTP existe (expéditeur et identifiant alors obligatoires)
+          EMAIL_TRANSPORT=
+          if [ -n "$EMAIL_SMTP_PASSWORD" ]; then
+            EMAIL_TRANSPORT=smtp
+            required="$required EMAIL_FROM EMAIL_SMTP_USER"
+          else
+            echo "::warning::EMAIL_SMTP_PASSWORD absent : Directus n'enverra aucun courriel (invitations, mot de passe oublié)."
+          fi
           for k in $required; do
             if [ -z "${!k}" ]; then echo "::error::$k manquant (secret ou variable de l'environnement production)"; fail=1; fi
             if [[ "${!k}" == *example.* || "${!k}" == change-me ]]; then echo "::error::$k a encore sa valeur d'exemple"; fail=1; fi

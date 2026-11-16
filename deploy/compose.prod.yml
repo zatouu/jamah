@@ -56,6 +56,14 @@ services:
       DB_DATABASE: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
+      # Courriels (invitations, mot de passe oublié) : SMTP Brevo si EMAIL_SMTP_PASSWORD est défini, sinon aucun envoi
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-sendmail}
+      EMAIL_FROM: ${EMAIL_FROM:-no-reply@directus.io}
+      EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp-relay.brevo.com}
+      EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
+      EMAIL_SMTP_SECURE: "false"
+      EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
+      EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
       WEBSOCKETS_ENABLED: "false"
       FILES_MAX_UPLOAD_SIZE: 1gb
       CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: "'self' https://www.youtube-nocookie.com"

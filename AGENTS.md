@@ -104,6 +104,8 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
    `gh secret set X -e production` / `gh variable set X -e production` puis `gh workflow run Deploy`.
    `SITE_DOMAIN` est déduit de la variable `SITE_URL` (aussi figée dans l'image). `POSTGRES_PASSWORD` et
    `DIRECTUS_ADMIN_PASSWORD` ne sont lus qu'à l'initialisation : les changer ensuite exige `ALTER USER` / Directus.
+   Courriels Directus (invitations, mot de passe oublié) : SMTP Brevo, secret `EMAIL_SMTP_PASSWORD` + variables
+   `EMAIL_SMTP_USER`, `EMAIL_FROM` (expéditeur vérifié dans Brevo) ; sans eux, aucun courriel ne part.
    VM jamah : `ubuntu@35.180.202.239`, clé `D:\itvision\utils.pem` (empreinte : variable `VM_KNOWN_HOSTS`).
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
 7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses ; ajouter
