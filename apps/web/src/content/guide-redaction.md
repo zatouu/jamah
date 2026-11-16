@@ -5,9 +5,9 @@ Aucune connaissance technique n'est nécessaire.
 
 | | Adresse |
 |---|---|
-| Site public | [jamah.35-180-202-239.sslip.io](https://jamah.35-180-202-239.sslip.io) (adresse provisoire, en attendant le nom de domaine) |
-| Espace de rédaction (Directus) | [cms.35-180-202-239.sslip.io](https://cms.35-180-202-239.sslip.io) |
-| Ce guide en ligne (lien à partager) | [jamah.35-180-202-239.sslip.io/fr/guide-redaction](https://jamah.35-180-202-239.sslip.io/fr/guide-redaction) |
+| Site public | [sayroulabad.com](https://sayroulabad.com) |
+| Espace de rédaction (Directus) | [cms.sayroulabad.com](https://cms.sayroulabad.com) |
+| Ce guide en ligne (lien à partager) | [sayroulabad.com/fr/guide-redaction](https://sayroulabad.com/fr/guide-redaction) |
 
 > Ce guide évolue avec le site. La section [Fonctionnalités à venir](#10-fonctionnalités-à-venir) liste ce qui
 > n'existe pas encore ; le [journal des mises à jour](#journal-des-mises-à-jour) en fin de document indique ce qui a changé.
@@ -102,7 +102,7 @@ Chaque fiche de contenu porte un **Statut** (pastille de couleur dans les listes
 
 ### 3.1 Se connecter
 
-1. Ouvrir [cms.35-180-202-239.sslip.io](https://cms.35-180-202-239.sslip.io) et saisir son courriel et son mot de passe.
+1. Ouvrir [cms.sayroulabad.com](https://cms.sayroulabad.com) et saisir son courriel et son mot de passe.
 2. Première fois : cliquer sur son avatar (en bas à gauche) pour vérifier la **langue de l'interface** (français) et
    changer son mot de passe.
 
@@ -462,7 +462,6 @@ Ordre prévu (susceptible d'évoluer). Ce guide sera complété à chaque mise e
 | **Import automatique des vidéos YouTube** | Les nouvelles vidéos de la chaîne arriveront seules en *Brouillon* dans **Vidéos** ; il restera à les classer, résumer et publier | À venir |
 | **Recherche dans le site** | Recherche plein texte (français, arabe, et anglais) dans les pages, documents et transcriptions publiés ; rien à faire de plus que publier | 2e partie |
 | **Reprise du corpus existant** (sufi-knowledge) | Des citations et documents déjà rassemblés arriveront en *Brouillon* pour vérification des droits et relecture | À venir |
-| **Nom de domaine définitif** | Nouvelles adresses du site et de Directus (mêmes identifiants) | En attente |
 
 ---
 
@@ -531,6 +530,7 @@ Documentation technique : `cms/README.md` (installation de Directus), `AGENTS.md
 
 | Date | Changement |
 |---|---|
+| 16/11/2026 | Nom de domaine : site sur sayroulabad.com, Directus sur cms.sayroulabad.com (les anciennes adresses redirigent) |
 | 16/11/2026 | Tableaux de bord Insights : « À traiter », « Avancement du site », « Droits et images » (§ 3.5) |
 | 16/11/2026 | Guide publié sur le site : `/fr/guide-redaction` (lien à partager, hors menu, non référencé) |
 | 15/11/2026 | Première version : rôles, statuts, interface, collections, images, vidéos, transcription, traduction de textes, fonctionnalités à venir, architecture |

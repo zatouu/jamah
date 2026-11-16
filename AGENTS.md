@@ -107,10 +107,13 @@ Suite (dans l'ordre) — direction du site validée le 13/11/2026 ; la recherche
    Courriels Directus (invitations, mot de passe oublié) : SMTP Brevo, secret `EMAIL_SMTP_PASSWORD` + variables
    `EMAIL_SMTP_USER`, `EMAIL_FROM` (expéditeur vérifié dans Brevo) ; sans eux, aucun courriel ne part.
    VM jamah : `ubuntu@35.180.202.239`, clé `D:\itvision\utils.pem` (empreinte : variable `VM_KNOWN_HOSTS`).
+   Domaine (16/11/2026) : `sayroulabad.com` (DNS OVH : `@`, `www`, `cms` en A vers la VM ; enregistrements Brevo DKIM/DMARC).
+   Site `https://sayroulabad.com` (`www` redirigé), CMS `https://cms.sayroulabad.com` ; les anciennes adresses sslip.io
+   sont redirigées (variables `LEGACY_SITE_DOMAIN` / `LEGACY_CMS_DOMAIN`).
 6. Retirer `feed.tmp.xml` de la racine (fichier temporaire commité par erreur).
 7. 2e partie : recherche (indexation depuis Directus par flow → `POST /v1/documents`, transcriptions incluses ; ajouter
    l'anglais aux analyseurs de `services/search`).
 
 À obtenir de la Jamah : graphie arabe du nom, présentation de la Jamah, contact, présentation validée de Cheikh Ousmane Mbow
 et portrait (avec accord), réponses au dossier biographique §5, photos (auteur, date, accord), premiers écrits de Cheikh
-Ousmane Mbow (Word d'origine + droits), choix des vidéos publiables, nom de domaine.
+Ousmane Mbow (Word d'origine + droits), choix des vidéos publiables.

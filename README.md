@@ -52,9 +52,15 @@ python -m venv .venv && .venv/Scripts/pip install -r requirements-dev.txt   # Wi
 .venv/Scripts/uvicorn app.main:app --reload
 ```
 
-## Déploiement (préproduction)
+## Déploiement
 
-Le **site public seul** est déployé sur la VM partagée avec itvision (Debian 13, arm64, 1,8 Go RAM) :
+Production : **https://sayroulabad.com** (site) et **https://cms.sayroulabad.com** (Directus), sur une VM AWS dédiée
+(`deploy/compose.prod.yml`, Caddy HTTPS), mise à jour par GitHub Actions (`.github/workflows/deploy.yml`) ; détails dans
+`AGENTS.md`. DNS chez OVH : `@`, `www` et `cms` en `A` vers `35.180.202.239` ; `www` est redirigé vers le domaine nu.
+
+### Ancienne voie (préproduction, abandonnée)
+
+Le **site public seul** était déployé sur la VM partagée avec itvision (Debian 13, arm64, 1,8 Go RAM) :
 
 | Élément | Valeur |
 |---|---|

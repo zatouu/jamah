@@ -48,4 +48,5 @@ Reste à faire / à fournir :
 - [ ] Photothèque de la Jamah (avec autorisations) : portrait de Cheikh Ousmane Mbow, Gamou de Boubacar, ḥaḍra, dars
 - [ ] Vérifier les droits de la photographie d'archive de Cheikh Ibrāhīm Niasse (`File:Ibrahim_Niyass.jpg`) ou la remplacer
 - [ ] Texte arabe original de la citation du premier discours de Cheikh Ould Khayri (25/08/1978)
-- [ ] Coordonnées de contact et nom de domaine définitif
+- [ ] Coordonnées de contact
+- [x] Nom de domaine définitif : `sayroulabad.com` (16/11/2026)
