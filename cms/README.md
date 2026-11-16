@@ -16,7 +16,11 @@ docker compose up -d postgres directus web
 docker compose run --rm cms-setup
 ```
 
-`cms-setup` lance `bootstrap.mjs` puis `seed.mjs`. Les deux sont idempotents : relancer ne remplace rien.
+`cms-setup` lance `bootstrap.mjs`, `seed.mjs` puis `dashboards.mjs`. Tous sont idempotents : relancer ne remplace rien.
+
+- `dashboards.mjs` : tableaux Insights « À traiter », « Avancement du site », « Droits et images » (lecture accordée aux
+  rôles Rédacteur et Relecteur par `bootstrap.mjs`). Un tableau existant n'est pas modifié ; `DASHBOARDS_REFRESH=1`
+  recrée ses panneaux (perd les ajustements faits à la main). Le script interroge ensuite chaque panneau.
 
 - `bootstrap.mjs` : collections et champs, champs de crédit sur les fichiers, droits du rôle Public (lecture des seules
   fiches publiées et des seuls fichiers « Visible sur le site »), rôles Rédacteur et Relecteur, flow « Mise à jour du site ».

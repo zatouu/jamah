@@ -110,4 +110,4 @@ services:
       DIRECTUS_ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
       SITE_REVALIDATE_URL: http://web:3000/api/revalidate
       REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
-    command: ["sh", "-c", "node cms/scripts/bootstrap.mjs && node cms/scripts/seed.mjs"]
+    command: ["sh", "-c", "node cms/scripts/bootstrap.mjs && node cms/scripts/seed.mjs && node cms/scripts/dashboards.mjs"]

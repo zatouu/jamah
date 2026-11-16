@@ -58,7 +58,9 @@ Fait :
 
 ## Contenu géré par Directus (fait, non commité au départ, non vérifié par npm)
 
-- Modèle : `cms/scripts/bootstrap.mjs` (idempotent) ; import initial : `cms/scripts/seed.mjs` ; `docker compose run --rm cms-setup`.
+- Modèle : `cms/scripts/bootstrap.mjs` (idempotent) ; import initial : `cms/scripts/seed.mjs` ; tableaux Insights :
+  `cms/scripts/dashboards.mjs` (`DASHBOARDS_REFRESH=1` pour recréer) ; `docker compose run --rm cms-setup`.
+  Nouvelle collection ou nouveau champ de statut/droits : penser aux panneaux de `dashboards.mjs`.
   Guide éditeur : `cms/README.md`.
 - Champs localisés `<champ>_fr` / `<champ>_ar` / `<champ>_en`. Champ CMS vide = valeur par défaut (dictionnaires `src/i18n`,
   images locales) ; dans les listes CMS (cartes, rendez-vous), l'anglais vide reprend le français (`pickItem`).

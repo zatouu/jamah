@@ -436,6 +436,9 @@ await ensurePermissions(publicPolicy.id, [
   { collection: 'directus_files', action: 'read', fields: publicFileFields, permissions: { is_public: { _eq: true } } },
 ])
 
+// Tableaux de bord Insights (créés par dashboards.mjs) : consultables par tous les rôles éditoriaux.
+const insightsRead = ['directus_dashboards', 'directus_panels'].map((collection) => ({ collection, action: 'read' }))
+
 // Rédaction : crée et modifie des brouillons, propose en relecture ; ne publie ni ne supprime.
 const redaction = await ensurePolicy('Rédaction', 'Rédiger et proposer des contenus en relecture.', 'edit_note')
 await ensurePermissions(redaction, [
@@ -448,6 +451,7 @@ await ensurePermissions(redaction, [
   { collection: 'directus_files', action: 'create' },
   { collection: 'directus_files', action: 'update' },
   { collection: 'directus_folders', action: 'read' },
+  ...insightsRead,
 ])
 await ensureRole('Rédacteur', 'Rédige les contenus (brouillon, en relecture).', 'edit_note', redaction)
 
@@ -458,6 +462,7 @@ await ensurePermissions(relecture, [
     ['create', 'read', 'update', 'delete'].map((action) => ({ collection, action }))),
   ...['create', 'read', 'update', 'delete'].map((action) => ({ collection: 'directus_files', action })),
   ...['create', 'read', 'update'].map((action) => ({ collection: 'directus_folders', action })),
+  ...insightsRead,
 ])
 await ensureRole('Relecteur', 'Valide et publie les contenus.', 'verified', relecture)
 

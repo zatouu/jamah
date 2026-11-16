@@ -113,7 +113,7 @@ Chaque fiche de contenu porte un **Statut** (pastille de couleur dans les listes
 | **Contenu** (cube) | Toutes les collections du site : c'est là qu'on travaille au quotidien |
 | **Bibliothèque de fichiers** (dossier) | Images, PDF, vidéos et sons déposés, avec leurs crédits |
 | **Utilisateurs** (personnes) | Comptes et rôles (administrateurs) |
-| **Insights** (graphique) | Tableaux de bord (non utilisé pour l'instant) |
+| **Insights** (graphique) | Tableaux de bord : ce qui attend une action, l'avancement, les droits (voir § 3.5) |
 | **Paramètres** (engrenage) | Modèle de contenu, rôles, automatisations (administrateurs uniquement) |
 | **Notifications** (cloche) et **Activité** | Mentions dans les commentaires ; historique de qui a fait quoi |
 
@@ -144,6 +144,22 @@ Dans **Contenu**, cliquer sur une collection (ex. *Pages des rubriques*) affiche
 > **Une seule personne à la fois par fiche.** Directus ne gère pas l'écriture simultanée : si deux personnes modifient la
 > même fiche, le dernier enregistrement efface l'autre. Se coordonner, et en cas d'accident, récupérer le texte dans
 > **Révisions**.
+
+### 3.5 Les tableaux de bord (Insights)
+
+Module **Insights** (icône graphique) : trois tableaux, mis à jour à chaque ouverture. Dans les listes, un clic sur une
+ligne ouvre la fiche. Chacun ne voit que ce que son rôle lui permet de lire.
+
+| Tableau | Pour qui | Ce qu'il montre |
+|---|---|---|
+| **À traiter** | relecteurs, et chaque rédacteur pour son propre travail | Compteurs de fiches *En relecture* (pages, vidéos, documents, transcriptions, traductions, rendez-vous) ; pages à relire, les plus anciennes d'abord ; pages *Validées* pas encore publiées ; **Mes pages en cours** (celles que vous avez modifiées en dernier) ; vidéos, transcriptions et traductions à relire ; brouillons non modifiés depuis 30 jours |
+| **Avancement du site** | la Jamah, les coordinateurs | Rubriques publiées en français, arabe et anglais (sur le total) ; vidéos, documents et transcriptions publiés ; pages publiées en français à traduire en arabe ou en anglais ; pages publiées **sans sources ou sans nature de l'information** (à corriger) ; rubriques encore sans texte ; vidéos publiées sans résumé |
+| **Droits et images** | relecteurs, avant la mise en ligne officielle | Fichiers publics sans auteur ou sans licence ; images sans texte alternatif ; documents publiés sans mention des droits ; vidéos de débat en attente de validation par la Jamah |
+
+**Routine conseillée.** Relecteurs : ouvrir **À traiter** chaque semaine et vider les listes orange. Avant chaque
+annonce publique du site : **Droits et images** doit être à zéro.
+
+Les tableaux peuvent être ajustés dans Directus (crayon en haut à droite) par un administrateur.
 
 ---
 
@@ -515,5 +531,6 @@ Documentation technique : `cms/README.md` (installation de Directus), `AGENTS.md
 
 | Date | Changement |
 |---|---|
+| 16/11/2026 | Tableaux de bord Insights : « À traiter », « Avancement du site », « Droits et images » (§ 3.5) |
 | 16/11/2026 | Guide publié sur le site : `/fr/guide-redaction` (lien à partager, hors menu, non référencé) |
 | 15/11/2026 | Première version : rôles, statuts, interface, collections, images, vidéos, transcription, traduction de textes, fonctionnalités à venir, architecture |
