@@ -7,7 +7,8 @@ name: Deploy
 #   l'initialisation : les changer ensuite exige aussi ALTER USER (Postgres) / le changement dans Directus.
 # Variables : SITE_URL (https://...), CMS_DOMAIN, ACME_EMAIL, DIRECTUS_ADMIN_EMAIL, VM_KNOWN_HOSTS (ssh-keyscan) ;
 #   facultatives : DOCKER_PLATFORM (linux/arm64 pour Graviton), COMPOSE_PROFILES, SEARCH_API_URL,
-#   SEARCH_EMBEDDING_MODEL, ES_JAVA_OPTS.
+#   SEARCH_EMBEDDING_MODEL, ES_JAVA_OPTS, LEGACY_SITE_DOMAIN / LEGACY_CMS_DOMAIN (anciennes adresses redirigées).
+#   www.<SITE_DOMAIN> est redirigé vers le domaine nu (enregistrement DNS www requis).
 # Courriels Directus (Brevo) : secret EMAIL_SMTP_PASSWORD (clé SMTP) + variables EMAIL_SMTP_USER (identifiant SMTP)
 #   et EMAIL_FROM (expéditeur vérifié dans Brevo) ; EMAIL_SMTP_HOST / EMAIL_SMTP_PORT facultatifs (smtp-relay.brevo.com:587).
 on:
@@ -96,6 +97,8 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           CMS_DOMAIN: ${{ vars.CMS_DOMAIN }}
+          LEGACY_SITE_DOMAIN: ${{ vars.LEGACY_SITE_DOMAIN }}
+          LEGACY_CMS_DOMAIN: ${{ vars.LEGACY_CMS_DOMAIN }}
           ACME_EMAIL: ${{ vars.ACME_EMAIL }}
           DIRECTUS_ADMIN_EMAIL: ${{ vars.DIRECTUS_ADMIN_EMAIL }}
           COMPOSE_PROFILES: ${{ vars.COMPOSE_PROFILES }}
@@ -120,7 +123,7 @@ jobs:
           POSTGRES_DB=jamah
           POSTGRES_USER=jamah
           required="SITE_DOMAIN CMS_DOMAIN ACME_EMAIL DIRECTUS_ADMIN_EMAIL POSTGRES_PASSWORD DIRECTUS_SECRET DIRECTUS_ADMIN_PASSWORD REVALIDATE_TOKEN SEARCH_INDEX_TOKEN WEB_IMAGE WEB_TAG"
-          optional="POSTGRES_DB POSTGRES_USER COMPOSE_PROFILES SEARCH_API_URL SEARCH_EMBEDDING_MODEL ES_JAVA_OPTS EMAIL_TRANSPORT EMAIL_FROM EMAIL_SMTP_HOST EMAIL_SMTP_PORT EMAIL_SMTP_USER EMAIL_SMTP_PASSWORD"
+          optional="LEGACY_SITE_DOMAIN LEGACY_CMS_DOMAIN POSTGRES_DB POSTGRES_USER COMPOSE_PROFILES SEARCH_API_URL SEARCH_EMBEDDING_MODEL ES_JAVA_OPTS EMAIL_TRANSPORT EMAIL_FROM EMAIL_SMTP_HOST EMAIL_SMTP_PORT EMAIL_SMTP_USER EMAIL_SMTP_PASSWORD"
           fail=
           [[ "$SITE_URL" == https://* ]] || { echo "::error::SITE_URL doit commencer par https://"; fail=1; }
           # Courriels Directus : SMTP dès que le mot de passe SMTP existe (expéditeur et identifiant alors obligatoires)
@@ -160,6 +163,12 @@ jobs:
           if [ "$sum" != "$(cat data/.extensions.sha 2>/dev/null)" ]; then
             compose restart directus
             echo "$sum" > data/.extensions.sha
+          fi
+          # Caddyfile monté en fichier : rsync le remplace (nouvel inode), seul un redémarrage le relit
+          sum=$(sha256sum deploy/Caddyfile)
+          if [ "$sum" != "$(cat data/.caddyfile.sha 2>/dev/null)" ]; then
+            compose restart caddy
+            echo "$sum" > data/.caddyfile.sha
           fi
           check() {
             for i in $(seq 1 20); do

@@ -14,6 +14,8 @@ services:
       SITE_DOMAIN: ${SITE_DOMAIN}
       CMS_DOMAIN: ${CMS_DOMAIN}
       ACME_EMAIL: ${ACME_EMAIL}
+      LEGACY_SITE_DOMAIN: ${LEGACY_SITE_DOMAIN:-legacy-site.localhost}
+      LEGACY_CMS_DOMAIN: ${LEGACY_CMS_DOMAIN:-legacy-cms.localhost}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ../data/caddy/data:/data

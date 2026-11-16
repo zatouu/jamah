@@ -7,10 +7,25 @@
 	reverse_proxy web:3000
 }
 
+# www -> domaine nu
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
 {$CMS_DOMAIN} {
 	encode zstd gzip
 	request_body {
 		max_size 1GB
 	}
 	reverse_proxy directus:8055
+}
+
+# Anciennes adresses (ex. sslip.io avant le nom de domaine) -> nouvelles, liens partagés compris.
+# Sans valeur (compose.prod.yml) : noms en .localhost, certificat interne, aucune demande à Let's Encrypt.
+{$LEGACY_SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
+{$LEGACY_CMS_DOMAIN} {
+	redir https://{$CMS_DOMAIN}{uri} permanent
 }
